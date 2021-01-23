@@ -1,0 +1,8 @@
+query list{
+  getTeas{
+    id
+    name
+    type
+  }
+}
+

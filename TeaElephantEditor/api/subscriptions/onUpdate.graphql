@@ -1,0 +1,8 @@
+subscription onUpdate{
+    onUpdateTea{
+        id
+        name
+        type
+        description
+    }
+}

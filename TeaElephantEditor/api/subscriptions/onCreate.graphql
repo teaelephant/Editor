@@ -1,0 +1,8 @@
+subscription onCreate{
+    onCreateTea{
+        id
+        name
+        type
+        description
+    }
+}

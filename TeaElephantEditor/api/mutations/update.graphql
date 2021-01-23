@@ -1,0 +1,8 @@
+mutation update($id: ID!, $tea: TeaData!){
+    updateTea(id: $id, tea: $tea){
+        id
+        name
+        description
+        type
+    }
+}

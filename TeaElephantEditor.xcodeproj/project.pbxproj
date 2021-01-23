@@ -3,16 +3,34 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1CEAF1D43A472B2B0BADE115 /* onCreate.graphql in Sources */ = {isa = PBXBuildFile; fileRef = 1CEAF84F8015B3D5BC3595E2 /* onCreate.graphql */; };
+		1CEAF67C5A5FDE16A34B5B09 /* onDelete.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAF3722C7ED29E9C2B37C5 /* onDelete.graphql */; };
+		1CEAF6FFD8777AECF389113F /* get.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAF7500BA22B3C5427EE83 /* get.graphql */; };
+		1CEAF7EE2961842EBC68F589 /* list.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAFE6D04D93EA6004605A8 /* list.graphql */; };
+		1CEAF931206558A790B9D7B8 /* onUpdate.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAF32D017DA77BBE0ED183 /* onUpdate.graphql */; };
+		1CEAFA89C75ACAD72CF96233 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEAF68E609F7A8BE6874487 /* API.swift */; };
+		1CEAFB542D979391933AF106 /* DetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEAFBC2793A1EB15CF783F9 /* DetailController.swift */; };
+		1CEAFFF1DF69A53C9ED43C93 /* listManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEAF48509093FF7281BF2B9 /* listManager.swift */; };
+		4B0B028225B26515006C32AE /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0B028125B26515006C32AE /* Network.swift */; };
+		4B4ABF9D25AE42AD002095E6 /* Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4ABF9C25AE42AD002095E6 /* Detail.swift */; };
+		4B73E7CA25B386D800827D58 /* ApolloCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA93D25B25AE800F98920 /* ApolloCore */; };
+		4B73E7CB25B386D800827D58 /* ApolloWebSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA93F25B25AE800F98920 /* ApolloWebSocket */; };
+		4B73E7CC25B386D800827D58 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA94125B25AE800F98920 /* Apollo */; };
+		4B73E7CD25B386D800827D58 /* ApolloCodegenLib in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA94625B25AE800F98920 /* ApolloCodegenLib */; };
+		4B73E7CF25B386EB00827D58 /* detector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B73E7CE25B386EB00827D58 /* detector.swift */; };
+		4B7D570325AD01C100790BC0 /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D570225AD01C100790BC0 /* Table.swift */; };
 		4B804AF625ACFB1800BE1BD0 /* TeaElephantEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B804AF525ACFB1800BE1BD0 /* TeaElephantEditorApp.swift */; };
 		4B804AF825ACFB1800BE1BD0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B804AF725ACFB1800BE1BD0 /* ContentView.swift */; };
 		4B804AFA25ACFB1900BE1BD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B804AF925ACFB1900BE1BD0 /* Assets.xcassets */; };
 		4B804AFD25ACFB1900BE1BD0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B804AFC25ACFB1900BE1BD0 /* Preview Assets.xcassets */; };
 		4B804B0925ACFB1900BE1BD0 /* TeaElephantEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B804B0825ACFB1900BE1BD0 /* TeaElephantEditorTests.swift */; };
 		4B804B1425ACFB1900BE1BD0 /* TeaElephantEditorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B804B1325ACFB1900BE1BD0 /* TeaElephantEditorUITests.swift */; };
+		4BDE5B0625ACFF9E005BBBC5 /* TeaInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDE5B0525ACFF9E005BBBC5 /* TeaInfo.swift */; };
+		4BE9293B25B2EF9E009E4BA5 /* detailManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE9293A25B2EF9E009E4BA5 /* detailManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,7 +50,37 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		4B0BA94825B25AE800F98920 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		1CEAF32D017DA77BBE0ED183 /* onUpdate.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = onUpdate.graphql; sourceTree = "<group>"; };
+		1CEAF3722C7ED29E9C2B37C5 /* onDelete.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = onDelete.graphql; sourceTree = "<group>"; };
+		1CEAF48509093FF7281BF2B9 /* listManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = listManager.swift; sourceTree = "<group>"; };
+		1CEAF68E609F7A8BE6874487 /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		1CEAF721A5E0C23B336FB6CA /* create.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = create.graphql; sourceTree = "<group>"; };
+		1CEAF7500BA22B3C5427EE83 /* get.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = get.graphql; sourceTree = "<group>"; };
+		1CEAF790AA3CE376E8A567E6 /* .graphqlconfig */ = {isa = PBXFileReference; lastKnownFileType = file.graphqlconfig; path = .graphqlconfig; sourceTree = "<group>"; };
+		1CEAF84E946AF348276E8E07 /* update.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = update.graphql; sourceTree = "<group>"; };
+		1CEAF84F8015B3D5BC3595E2 /* onCreate.graphql */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.graphql; path = onCreate.graphql; sourceTree = "<group>"; };
+		1CEAFBC2793A1EB15CF783F9 /* DetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailController.swift; sourceTree = "<group>"; };
+		1CEAFC8AD7CE081FDD10C5ED /* delete.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = delete.graphql; sourceTree = "<group>"; };
+		1CEAFE6D04D93EA6004605A8 /* list.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = list.graphql; sourceTree = "<group>"; };
+		4B0B028125B26515006C32AE /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		4B0BA94B25B25B8500F98920 /* schema.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = schema.json; sourceTree = "<group>"; };
+		4B4ABF9C25AE42AD002095E6 /* Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detail.swift; sourceTree = "<group>"; };
+		4B73E7CE25B386EB00827D58 /* detector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = detector.swift; sourceTree = "<group>"; };
+		4B7D570225AD01C100790BC0 /* Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Table.swift; sourceTree = "<group>"; };
 		4B804AF225ACFB1800BE1BD0 /* TeaElephantEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeaElephantEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B804AF525ACFB1800BE1BD0 /* TeaElephantEditorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaElephantEditorApp.swift; sourceTree = "<group>"; };
 		4B804AF725ACFB1800BE1BD0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -46,6 +94,8 @@
 		4B804B0F25ACFB1900BE1BD0 /* TeaElephantEditorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TeaElephantEditorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4B804B1325ACFB1900BE1BD0 /* TeaElephantEditorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaElephantEditorUITests.swift; sourceTree = "<group>"; };
 		4B804B1525ACFB1900BE1BD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4BDE5B0525ACFF9E005BBBC5 /* TeaInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaInfo.swift; sourceTree = "<group>"; };
+		4BE9293A25B2EF9E009E4BA5 /* detailManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = detailManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +103,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B73E7CA25B386D800827D58 /* ApolloCore in Frameworks */,
+				4B73E7CC25B386D800827D58 /* Apollo in Frameworks */,
+				4B73E7CB25B386D800827D58 /* ApolloWebSocket in Frameworks */,
+				4B73E7CD25B386D800827D58 /* ApolloCodegenLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -73,6 +127,68 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1CEAF1143C40331337DA312E /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				1CEAF48509093FF7281BF2B9 /* listManager.swift */,
+				4BE9293A25B2EF9E009E4BA5 /* detailManager.swift */,
+				4B73E7CE25B386EB00827D58 /* detector.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		1CEAF1BFFD45E78A888D5687 /* subscriptions */ = {
+			isa = PBXGroup;
+			children = (
+				1CEAF84F8015B3D5BC3595E2 /* onCreate.graphql */,
+				1CEAF32D017DA77BBE0ED183 /* onUpdate.graphql */,
+				1CEAF3722C7ED29E9C2B37C5 /* onDelete.graphql */,
+			);
+			path = subscriptions;
+			sourceTree = "<group>";
+		};
+		1CEAF32F34C72A7405008450 /* queries */ = {
+			isa = PBXGroup;
+			children = (
+				1CEAFE6D04D93EA6004605A8 /* list.graphql */,
+				1CEAF7500BA22B3C5427EE83 /* get.graphql */,
+			);
+			path = queries;
+			sourceTree = "<group>";
+		};
+		1CEAF3DF0ED94223F4355FAF /* mutations */ = {
+			isa = PBXGroup;
+			children = (
+				1CEAF721A5E0C23B336FB6CA /* create.graphql */,
+				1CEAF84E946AF348276E8E07 /* update.graphql */,
+				1CEAFC8AD7CE081FDD10C5ED /* delete.graphql */,
+			);
+			path = mutations;
+			sourceTree = "<group>";
+		};
+		1CEAFA6A593ED4DC201BED35 /* api */ = {
+			isa = PBXGroup;
+			children = (
+				4B0BA94B25B25B8500F98920 /* schema.json */,
+				1CEAF68E609F7A8BE6874487 /* API.swift */,
+				1CEAF32F34C72A7405008450 /* queries */,
+				1CEAF3DF0ED94223F4355FAF /* mutations */,
+				1CEAF790AA3CE376E8A567E6 /* .graphqlconfig */,
+				1CEAF1BFFD45E78A888D5687 /* subscriptions */,
+			);
+			path = api;
+			sourceTree = "<group>";
+		};
+		4B7D570125AD01AC00790BC0 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4B7D570225AD01C100790BC0 /* Table.swift */,
+				4B4ABF9C25AE42AD002095E6 /* Detail.swift */,
+				1CEAFBC2793A1EB15CF783F9 /* DetailController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		4B804AE925ACFB1800BE1BD0 = {
 			isa = PBXGroup;
 			children = (
@@ -96,12 +212,17 @@
 		4B804AF425ACFB1800BE1BD0 /* TeaElephantEditor */ = {
 			isa = PBXGroup;
 			children = (
+				4B7D570125AD01AC00790BC0 /* Views */,
+				4BDE5B0425ACFF61005BBBC5 /* Models */,
 				4B804AF525ACFB1800BE1BD0 /* TeaElephantEditorApp.swift */,
 				4B804AF725ACFB1800BE1BD0 /* ContentView.swift */,
 				4B804AF925ACFB1900BE1BD0 /* Assets.xcassets */,
 				4B804AFE25ACFB1900BE1BD0 /* Info.plist */,
 				4B804AFF25ACFB1900BE1BD0 /* TeaElephantEditor.entitlements */,
 				4B804AFB25ACFB1900BE1BD0 /* Preview Content */,
+				1CEAF1143C40331337DA312E /* Controllers */,
+				4B0B028125B26515006C32AE /* Network.swift */,
+				1CEAFA6A593ED4DC201BED35 /* api */,
 			);
 			path = TeaElephantEditor;
 			sourceTree = "<group>";
@@ -132,6 +253,14 @@
 			path = TeaElephantEditorUITests;
 			sourceTree = "<group>";
 		};
+		4BDE5B0425ACFF61005BBBC5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4BDE5B0525ACFF9E005BBBC5 /* TeaInfo.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -139,15 +268,23 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4B804B1825ACFB1900BE1BD0 /* Build configuration list for PBXNativeTarget "TeaElephantEditor" */;
 			buildPhases = (
+				4B0BA95825B25EDA00F98920 /* Generate Apollo GraphQL API */,
 				4B804AEE25ACFB1800BE1BD0 /* Sources */,
 				4B804AEF25ACFB1800BE1BD0 /* Frameworks */,
 				4B804AF025ACFB1800BE1BD0 /* Resources */,
+				4B0BA94825B25AE800F98920 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = TeaElephantEditor;
+			packageProductDependencies = (
+				4B0BA93D25B25AE800F98920 /* ApolloCore */,
+				4B0BA93F25B25AE800F98920 /* ApolloWebSocket */,
+				4B0BA94125B25AE800F98920 /* Apollo */,
+				4B0BA94625B25AE800F98920 /* ApolloCodegenLib */,
+			);
 			productName = TeaElephantEditor;
 			productReference = 4B804AF225ACFB1800BE1BD0 /* TeaElephantEditor.app */;
 			productType = "com.apple.product-type.application";
@@ -219,6 +356,9 @@
 				Base,
 			);
 			mainGroup = 4B804AE925ACFB1800BE1BD0;
+			packageReferences = (
+				4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */,
+			);
 			productRefGroup = 4B804AF325ACFB1800BE1BD0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -237,6 +377,10 @@
 			files = (
 				4B804AFD25ACFB1900BE1BD0 /* Preview Assets.xcassets in Resources */,
 				4B804AFA25ACFB1900BE1BD0 /* Assets.xcassets in Resources */,
+				1CEAF7EE2961842EBC68F589 /* list.graphql in Resources */,
+				1CEAF6FFD8777AECF389113F /* get.graphql in Resources */,
+				1CEAF931206558A790B9D7B8 /* onUpdate.graphql in Resources */,
+				1CEAF67C5A5FDE16A34B5B09 /* onDelete.graphql in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,13 +400,44 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4B0BA95825B25EDA00F98920 /* Generate Apollo GraphQL API */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Apollo GraphQL API";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Go to the build root and search up the chain to find the Derived Data Path where the source packages are checked out.\nDERIVED_DATA_CANDIDATE=\"${BUILD_ROOT}\"\n\nwhile ! [ -d \"${DERIVED_DATA_CANDIDATE}/SourcePackages\" ]; do\n  if [ \"${DERIVED_DATA_CANDIDATE}\" = / ]; then\n    echo >&2 \"error: Unable to locate SourcePackages directory from BUILD_ROOT: '${BUILD_ROOT}'\"\n    exit 1\n  fi\n\n  DERIVED_DATA_CANDIDATE=\"$(dirname \"${DERIVED_DATA_CANDIDATE}\")\"\ndone\n\n# Grab a reference to the directory where scripts are checked out\nSCRIPT_PATH=\"${DERIVED_DATA_CANDIDATE}/SourcePackages/checkouts/apollo-ios/scripts\"\n\nif [ -z \"${SCRIPT_PATH}\" ]; then\n    echo >&2 \"error: Couldn't find the CLI script in your checked out SPM packages; make sure to add the framework to your project.\"\n    exit 1\nfi\n\ncd \"${SRCROOT}/${TARGET_NAME}\"\n\"${SCRIPT_PATH}\"/run-bundled-codegen.sh codegen:generate --target=swift --includes=./api/**/*.graphql --localSchemaFile=\"./api/schema.json\" ./api/API.swift\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4B804AEE25ACFB1800BE1BD0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BE9293B25B2EF9E009E4BA5 /* detailManager.swift in Sources */,
+				4BDE5B0625ACFF9E005BBBC5 /* TeaInfo.swift in Sources */,
+				4B4ABF9D25AE42AD002095E6 /* Detail.swift in Sources */,
 				4B804AF825ACFB1800BE1BD0 /* ContentView.swift in Sources */,
+				4B7D570325AD01C100790BC0 /* Table.swift in Sources */,
 				4B804AF625ACFB1800BE1BD0 /* TeaElephantEditorApp.swift in Sources */,
+				4B0B028225B26515006C32AE /* Network.swift in Sources */,
+				4B73E7CF25B386EB00827D58 /* detector.swift in Sources */,
+				1CEAFFF1DF69A53C9ED43C93 /* listManager.swift in Sources */,
+				1CEAFA89C75ACAD72CF96233 /* API.swift in Sources */,
+				1CEAFB542D979391933AF106 /* DetailController.swift in Sources */,
+				1CEAF1D43A472B2B0BADE115 /* onCreate.graphql in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +594,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TeaElephantEditor/TeaElephantEditor.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaElephantEditor/Preview Content\"";
@@ -443,6 +619,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TeaElephantEditor/TeaElephantEditor.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaElephantEditor/Preview Content\"";
@@ -585,6 +762,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apollographql/apollo-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.40.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		4B0BA93D25B25AE800F98920 /* ApolloCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = ApolloCore;
+		};
+		4B0BA93F25B25AE800F98920 /* ApolloWebSocket */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = ApolloWebSocket;
+		};
+		4B0BA94125B25AE800F98920 /* Apollo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = Apollo;
+		};
+		4B0BA94625B25AE800F98920 /* ApolloCodegenLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = ApolloCodegenLib;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4B804AEA25ACFB1800BE1BD0 /* Project object */;
 }

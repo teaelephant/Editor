@@ -1,0 +1,15 @@
+query tagsMeta {
+    getTagsCategories {
+        id
+        name
+    }
+    getTags {
+        id
+        name
+        color
+        category {
+            id
+            name
+        }
+    }
+}

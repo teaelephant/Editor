@@ -1,0 +1,7 @@
+query tags($name:String, $category:ID!) {
+    getTags(name: $name, category: $category) {
+        id
+        name
+        color
+    }
+}

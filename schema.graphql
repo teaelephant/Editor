@@ -1,0 +1,96 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+type Mutation {
+    addTagToTea(tagID: ID!, teaID: ID!): Tea!
+    changeTagCategory(category: ID!, id: ID!): Tag!
+    createTag(category: ID!, color: String!, name: String!): Tag!
+    createTagCategory(name: String!): TagCategory!
+    deleteTag(id: ID!): ID!
+    deleteTagCategory(id: ID!): ID!
+    deleteTagFromTea(tagID: ID!, teaID: ID!): Tea!
+    deleteTea(id: ID!): ID!
+    newTea(tea: TeaData!): Tea!
+    updateTag(color: String!, id: ID!, name: String!): Tag!
+    updateTagCategory(id: ID!, name: String!): TagCategory!
+    updateTea(id: ID!, tea: TeaData!): Tea!
+    writeToQR(data: QRRecordData!, id: ID!): QRRecord!
+}
+
+type QRRecord {
+    bowlingTemp: Int!
+    expirationDate: Date!
+    id: ID!
+    tea: Tea!
+}
+
+type Query {
+    getQrRecord(id: ID!): QRRecord
+    getTag(id: ID!): Tag
+    getTags(category: ID, name: String): [Tag!]!
+    getTagsCategories(name: String): [TagCategory!]!
+    getTea(id: ID!): Tea
+    getTeas(prefix: String): [Tea!]!
+}
+
+type Subscription {
+    onAddTagToTea: Tea!
+    onCreateTag: Tag!
+    onCreateTagCategory: TagCategory!
+    onCreateTea: Tea!
+    onDeleteTag: ID!
+    onDeleteTagCategory: ID!
+    onDeleteTagFromTea: Tea!
+    onDeleteTea: ID!
+    onUpdateTag: Tag!
+    onUpdateTagCategory: TagCategory!
+    onUpdateTea: Tea!
+}
+
+type Tag {
+    category: TagCategory!
+    color: String!
+    id: ID!
+    name: String!
+}
+
+type TagCategory {
+    id: ID!
+    name: String!
+}
+
+type Tea {
+    description: String!
+    id: ID!
+    name: String!
+    tags: [Tag!]!
+    type: Type!
+}
+
+enum Type {
+    coffee
+    herb
+    other
+    tea
+    unknown
+}
+
+input QRRecordData {
+    bowlingTemp: Int!
+    expirationDate: Date!
+    tea: ID!
+}
+
+input TeaData {
+    description: String!
+    name: String!
+    type: Type!
+}
+
+
+scalar Date

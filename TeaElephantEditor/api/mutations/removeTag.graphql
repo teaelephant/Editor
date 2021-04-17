@@ -1,0 +1,5 @@
+mutation removeTag($tea:ID!, $tag:ID!){
+    deleteTagFromTea(teaID:$tea, tagID:$tag){
+        id
+    }
+}

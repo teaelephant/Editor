@@ -98,6 +98,101 @@ public enum `Type`: RawRepresentable, Equatable, Hashable, CaseIterable, Apollo.
   }
 }
 
+public final class AddTagMutation: GraphQLMutation {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    mutation addTag($tea: ID!, $tag: ID!) {
+      addTagToTea(teaID: $tea, tagID: $tag) {
+        __typename
+        id
+      }
+    }
+    """
+
+  public let operationName: String = "addTag"
+
+  public var tea: GraphQLID
+  public var tag: GraphQLID
+
+  public init(tea: GraphQLID, tag: GraphQLID) {
+    self.tea = tea
+    self.tag = tag
+  }
+
+  public var variables: GraphQLMap? {
+    return ["tea": tea, "tag": tag]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Mutation"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("addTagToTea", arguments: ["teaID": GraphQLVariable("tea"), "tagID": GraphQLVariable("tag")], type: .nonNull(.object(AddTagToTea.selections))),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(addTagToTea: AddTagToTea) {
+      self.init(unsafeResultMap: ["__typename": "Mutation", "addTagToTea": addTagToTea.resultMap])
+    }
+
+    public var addTagToTea: AddTagToTea {
+      get {
+        return AddTagToTea(unsafeResultMap: resultMap["addTagToTea"]! as! ResultMap)
+      }
+      set {
+        resultMap.updateValue(newValue.resultMap, forKey: "addTagToTea")
+      }
+    }
+
+    public struct AddTagToTea: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["Tea"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(id: GraphQLID) {
+        self.init(unsafeResultMap: ["__typename": "Tea", "id": id])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      public var id: GraphQLID {
+        get {
+          return resultMap["id"]! as! GraphQLID
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "id")
+        }
+      }
+    }
+  }
+}
+
 public final class CreateMutation: GraphQLMutation {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -191,6 +286,229 @@ public final class CreateMutation: GraphQLMutation {
   }
 }
 
+public final class CreateTagMutation: GraphQLMutation {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    mutation createTag($name: String!, $color: String!, $category: ID!) {
+      createTag(name: $name, color: $color, category: $category) {
+        __typename
+        id
+        name
+        color
+      }
+    }
+    """
+
+  public let operationName: String = "createTag"
+
+  public var name: String
+  public var color: String
+  public var category: GraphQLID
+
+  public init(name: String, color: String, category: GraphQLID) {
+    self.name = name
+    self.color = color
+    self.category = category
+  }
+
+  public var variables: GraphQLMap? {
+    return ["name": name, "color": color, "category": category]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Mutation"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("createTag", arguments: ["name": GraphQLVariable("name"), "color": GraphQLVariable("color"), "category": GraphQLVariable("category")], type: .nonNull(.object(CreateTag.selections))),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(createTag: CreateTag) {
+      self.init(unsafeResultMap: ["__typename": "Mutation", "createTag": createTag.resultMap])
+    }
+
+    public var createTag: CreateTag {
+      get {
+        return CreateTag(unsafeResultMap: resultMap["createTag"]! as! ResultMap)
+      }
+      set {
+        resultMap.updateValue(newValue.resultMap, forKey: "createTag")
+      }
+    }
+
+    public struct CreateTag: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["Tag"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("name", type: .nonNull(.scalar(String.self))),
+          GraphQLField("color", type: .nonNull(.scalar(String.self))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(id: GraphQLID, name: String, color: String) {
+        self.init(unsafeResultMap: ["__typename": "Tag", "id": id, "name": name, "color": color])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      public var id: GraphQLID {
+        get {
+          return resultMap["id"]! as! GraphQLID
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "id")
+        }
+      }
+
+      public var name: String {
+        get {
+          return resultMap["name"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "name")
+        }
+      }
+
+      public var color: String {
+        get {
+          return resultMap["color"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "color")
+        }
+      }
+    }
+  }
+}
+
+public final class CreateTagCategoryMutation: GraphQLMutation {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    mutation createTagCategory($name: String!) {
+      createTagCategory(name: $name) {
+        __typename
+        id
+        name
+      }
+    }
+    """
+
+  public let operationName: String = "createTagCategory"
+
+  public var name: String
+
+  public init(name: String) {
+    self.name = name
+  }
+
+  public var variables: GraphQLMap? {
+    return ["name": name]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Mutation"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("createTagCategory", arguments: ["name": GraphQLVariable("name")], type: .nonNull(.object(CreateTagCategory.selections))),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(createTagCategory: CreateTagCategory) {
+      self.init(unsafeResultMap: ["__typename": "Mutation", "createTagCategory": createTagCategory.resultMap])
+    }
+
+    public var createTagCategory: CreateTagCategory {
+      get {
+        return CreateTagCategory(unsafeResultMap: resultMap["createTagCategory"]! as! ResultMap)
+      }
+      set {
+        resultMap.updateValue(newValue.resultMap, forKey: "createTagCategory")
+      }
+    }
+
+    public struct CreateTagCategory: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["TagCategory"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("name", type: .nonNull(.scalar(String.self))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(id: GraphQLID, name: String) {
+        self.init(unsafeResultMap: ["__typename": "TagCategory", "id": id, "name": name])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      public var id: GraphQLID {
+        get {
+          return resultMap["id"]! as! GraphQLID
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "id")
+        }
+      }
+
+      public var name: String {
+        get {
+          return resultMap["name"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "name")
+        }
+      }
+    }
+  }
+}
+
 public final class DeleteMutation: GraphQLMutation {
   /// The raw GraphQL definition of this operation.
   public let operationDefinition: String =
@@ -237,6 +555,101 @@ public final class DeleteMutation: GraphQLMutation {
       }
       set {
         resultMap.updateValue(newValue, forKey: "deleteTea")
+      }
+    }
+  }
+}
+
+public final class RemoveTagMutation: GraphQLMutation {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    mutation removeTag($tea: ID!, $tag: ID!) {
+      deleteTagFromTea(teaID: $tea, tagID: $tag) {
+        __typename
+        id
+      }
+    }
+    """
+
+  public let operationName: String = "removeTag"
+
+  public var tea: GraphQLID
+  public var tag: GraphQLID
+
+  public init(tea: GraphQLID, tag: GraphQLID) {
+    self.tea = tea
+    self.tag = tag
+  }
+
+  public var variables: GraphQLMap? {
+    return ["tea": tea, "tag": tag]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Mutation"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("deleteTagFromTea", arguments: ["teaID": GraphQLVariable("tea"), "tagID": GraphQLVariable("tag")], type: .nonNull(.object(DeleteTagFromTea.selections))),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(deleteTagFromTea: DeleteTagFromTea) {
+      self.init(unsafeResultMap: ["__typename": "Mutation", "deleteTagFromTea": deleteTagFromTea.resultMap])
+    }
+
+    public var deleteTagFromTea: DeleteTagFromTea {
+      get {
+        return DeleteTagFromTea(unsafeResultMap: resultMap["deleteTagFromTea"]! as! ResultMap)
+      }
+      set {
+        resultMap.updateValue(newValue.resultMap, forKey: "deleteTagFromTea")
+      }
+    }
+
+    public struct DeleteTagFromTea: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["Tea"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(id: GraphQLID) {
+        self.init(unsafeResultMap: ["__typename": "Tea", "id": id])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      public var id: GraphQLID {
+        get {
+          return resultMap["id"]! as! GraphQLID
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "id")
+        }
       }
     }
   }
@@ -381,6 +794,17 @@ public final class GetQuery: GraphQLQuery {
         name
         description
         type
+        tags {
+          __typename
+          id
+          name
+          color
+          category {
+            __typename
+            id
+            name
+          }
+        }
       }
     }
     """
@@ -435,6 +859,7 @@ public final class GetQuery: GraphQLQuery {
           GraphQLField("name", type: .nonNull(.scalar(String.self))),
           GraphQLField("description", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(`Type`.self))),
+          GraphQLField("tags", type: .nonNull(.list(.nonNull(.object(Tag.selections))))),
         ]
       }
 
@@ -444,8 +869,8 @@ public final class GetQuery: GraphQLQuery {
         self.resultMap = unsafeResultMap
       }
 
-      public init(id: GraphQLID, name: String, description: String, type: `Type`) {
-        self.init(unsafeResultMap: ["__typename": "Tea", "id": id, "name": name, "description": description, "type": type])
+      public init(id: GraphQLID, name: String, description: String, type: `Type`, tags: [Tag]) {
+        self.init(unsafeResultMap: ["__typename": "Tea", "id": id, "name": name, "description": description, "type": type, "tags": tags.map { (value: Tag) -> ResultMap in value.resultMap }])
       }
 
       public var __typename: String {
@@ -492,6 +917,133 @@ public final class GetQuery: GraphQLQuery {
           resultMap.updateValue(newValue, forKey: "type")
         }
       }
+
+      public var tags: [Tag] {
+        get {
+          return (resultMap["tags"] as! [ResultMap]).map { (value: ResultMap) -> Tag in Tag(unsafeResultMap: value) }
+        }
+        set {
+          resultMap.updateValue(newValue.map { (value: Tag) -> ResultMap in value.resultMap }, forKey: "tags")
+        }
+      }
+
+      public struct Tag: GraphQLSelectionSet {
+        public static let possibleTypes: [String] = ["Tag"]
+
+        public static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+            GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+            GraphQLField("name", type: .nonNull(.scalar(String.self))),
+            GraphQLField("color", type: .nonNull(.scalar(String.self))),
+            GraphQLField("category", type: .nonNull(.object(Category.selections))),
+          ]
+        }
+
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        public init(id: GraphQLID, name: String, color: String, category: Category) {
+          self.init(unsafeResultMap: ["__typename": "Tag", "id": id, "name": name, "color": color, "category": category.resultMap])
+        }
+
+        public var __typename: String {
+          get {
+            return resultMap["__typename"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "__typename")
+          }
+        }
+
+        public var id: GraphQLID {
+          get {
+            return resultMap["id"]! as! GraphQLID
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "id")
+          }
+        }
+
+        public var name: String {
+          get {
+            return resultMap["name"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "name")
+          }
+        }
+
+        public var color: String {
+          get {
+            return resultMap["color"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "color")
+          }
+        }
+
+        public var category: Category {
+          get {
+            return Category(unsafeResultMap: resultMap["category"]! as! ResultMap)
+          }
+          set {
+            resultMap.updateValue(newValue.resultMap, forKey: "category")
+          }
+        }
+
+        public struct Category: GraphQLSelectionSet {
+          public static let possibleTypes: [String] = ["TagCategory"]
+
+          public static var selections: [GraphQLSelection] {
+            return [
+              GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+              GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+              GraphQLField("name", type: .nonNull(.scalar(String.self))),
+            ]
+          }
+
+          public private(set) var resultMap: ResultMap
+
+          public init(unsafeResultMap: ResultMap) {
+            self.resultMap = unsafeResultMap
+          }
+
+          public init(id: GraphQLID, name: String) {
+            self.init(unsafeResultMap: ["__typename": "TagCategory", "id": id, "name": name])
+          }
+
+          public var __typename: String {
+            get {
+              return resultMap["__typename"]! as! String
+            }
+            set {
+              resultMap.updateValue(newValue, forKey: "__typename")
+            }
+          }
+
+          public var id: GraphQLID {
+            get {
+              return resultMap["id"]! as! GraphQLID
+            }
+            set {
+              resultMap.updateValue(newValue, forKey: "id")
+            }
+          }
+
+          public var name: String {
+            get {
+              return resultMap["name"]! as! String
+            }
+            set {
+              resultMap.updateValue(newValue, forKey: "name")
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -506,6 +1058,11 @@ public final class ListQuery: GraphQLQuery {
         id
         name
         type
+        tags {
+          __typename
+          id
+          color
+        }
       }
     }
     """
@@ -552,6 +1109,7 @@ public final class ListQuery: GraphQLQuery {
           GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
           GraphQLField("name", type: .nonNull(.scalar(String.self))),
           GraphQLField("type", type: .nonNull(.scalar(`Type`.self))),
+          GraphQLField("tags", type: .nonNull(.list(.nonNull(.object(Tag.selections))))),
         ]
       }
 
@@ -561,8 +1119,8 @@ public final class ListQuery: GraphQLQuery {
         self.resultMap = unsafeResultMap
       }
 
-      public init(id: GraphQLID, name: String, type: `Type`) {
-        self.init(unsafeResultMap: ["__typename": "Tea", "id": id, "name": name, "type": type])
+      public init(id: GraphQLID, name: String, type: `Type`, tags: [Tag]) {
+        self.init(unsafeResultMap: ["__typename": "Tea", "id": id, "name": name, "type": type, "tags": tags.map { (value: Tag) -> ResultMap in value.resultMap }])
       }
 
       public var __typename: String {
@@ -598,6 +1156,521 @@ public final class ListQuery: GraphQLQuery {
         }
         set {
           resultMap.updateValue(newValue, forKey: "type")
+        }
+      }
+
+      public var tags: [Tag] {
+        get {
+          return (resultMap["tags"] as! [ResultMap]).map { (value: ResultMap) -> Tag in Tag(unsafeResultMap: value) }
+        }
+        set {
+          resultMap.updateValue(newValue.map { (value: Tag) -> ResultMap in value.resultMap }, forKey: "tags")
+        }
+      }
+
+      public struct Tag: GraphQLSelectionSet {
+        public static let possibleTypes: [String] = ["Tag"]
+
+        public static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+            GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+            GraphQLField("color", type: .nonNull(.scalar(String.self))),
+          ]
+        }
+
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        public init(id: GraphQLID, color: String) {
+          self.init(unsafeResultMap: ["__typename": "Tag", "id": id, "color": color])
+        }
+
+        public var __typename: String {
+          get {
+            return resultMap["__typename"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "__typename")
+          }
+        }
+
+        public var id: GraphQLID {
+          get {
+            return resultMap["id"]! as! GraphQLID
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "id")
+          }
+        }
+
+        public var color: String {
+          get {
+            return resultMap["color"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "color")
+          }
+        }
+      }
+    }
+  }
+}
+
+public final class TagCategoriesQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    query tagCategories($name: String!) {
+      getTagsCategories(name: $name) {
+        __typename
+        id
+        name
+      }
+    }
+    """
+
+  public let operationName: String = "tagCategories"
+
+  public var name: String
+
+  public init(name: String) {
+    self.name = name
+  }
+
+  public var variables: GraphQLMap? {
+    return ["name": name]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Query"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("getTagsCategories", arguments: ["name": GraphQLVariable("name")], type: .nonNull(.list(.nonNull(.object(GetTagsCategory.selections))))),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(getTagsCategories: [GetTagsCategory]) {
+      self.init(unsafeResultMap: ["__typename": "Query", "getTagsCategories": getTagsCategories.map { (value: GetTagsCategory) -> ResultMap in value.resultMap }])
+    }
+
+    public var getTagsCategories: [GetTagsCategory] {
+      get {
+        return (resultMap["getTagsCategories"] as! [ResultMap]).map { (value: ResultMap) -> GetTagsCategory in GetTagsCategory(unsafeResultMap: value) }
+      }
+      set {
+        resultMap.updateValue(newValue.map { (value: GetTagsCategory) -> ResultMap in value.resultMap }, forKey: "getTagsCategories")
+      }
+    }
+
+    public struct GetTagsCategory: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["TagCategory"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("name", type: .nonNull(.scalar(String.self))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(id: GraphQLID, name: String) {
+        self.init(unsafeResultMap: ["__typename": "TagCategory", "id": id, "name": name])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      public var id: GraphQLID {
+        get {
+          return resultMap["id"]! as! GraphQLID
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "id")
+        }
+      }
+
+      public var name: String {
+        get {
+          return resultMap["name"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "name")
+        }
+      }
+    }
+  }
+}
+
+public final class TagsQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    query tags($name: String, $category: ID!) {
+      getTags(name: $name, category: $category) {
+        __typename
+        id
+        name
+        color
+      }
+    }
+    """
+
+  public let operationName: String = "tags"
+
+  public var name: String?
+  public var category: GraphQLID
+
+  public init(name: String? = nil, category: GraphQLID) {
+    self.name = name
+    self.category = category
+  }
+
+  public var variables: GraphQLMap? {
+    return ["name": name, "category": category]
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Query"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("getTags", arguments: ["name": GraphQLVariable("name"), "category": GraphQLVariable("category")], type: .nonNull(.list(.nonNull(.object(GetTag.selections))))),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(getTags: [GetTag]) {
+      self.init(unsafeResultMap: ["__typename": "Query", "getTags": getTags.map { (value: GetTag) -> ResultMap in value.resultMap }])
+    }
+
+    public var getTags: [GetTag] {
+      get {
+        return (resultMap["getTags"] as! [ResultMap]).map { (value: ResultMap) -> GetTag in GetTag(unsafeResultMap: value) }
+      }
+      set {
+        resultMap.updateValue(newValue.map { (value: GetTag) -> ResultMap in value.resultMap }, forKey: "getTags")
+      }
+    }
+
+    public struct GetTag: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["Tag"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("name", type: .nonNull(.scalar(String.self))),
+          GraphQLField("color", type: .nonNull(.scalar(String.self))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(id: GraphQLID, name: String, color: String) {
+        self.init(unsafeResultMap: ["__typename": "Tag", "id": id, "name": name, "color": color])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      public var id: GraphQLID {
+        get {
+          return resultMap["id"]! as! GraphQLID
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "id")
+        }
+      }
+
+      public var name: String {
+        get {
+          return resultMap["name"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "name")
+        }
+      }
+
+      public var color: String {
+        get {
+          return resultMap["color"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "color")
+        }
+      }
+    }
+  }
+}
+
+public final class TagsMetaQuery: GraphQLQuery {
+  /// The raw GraphQL definition of this operation.
+  public let operationDefinition: String =
+    """
+    query tagsMeta {
+      getTagsCategories {
+        __typename
+        id
+        name
+      }
+      getTags {
+        __typename
+        id
+        name
+        color
+        category {
+          __typename
+          id
+          name
+        }
+      }
+    }
+    """
+
+  public let operationName: String = "tagsMeta"
+
+  public init() {
+  }
+
+  public struct Data: GraphQLSelectionSet {
+    public static let possibleTypes: [String] = ["Query"]
+
+    public static var selections: [GraphQLSelection] {
+      return [
+        GraphQLField("getTagsCategories", type: .nonNull(.list(.nonNull(.object(GetTagsCategory.selections))))),
+        GraphQLField("getTags", type: .nonNull(.list(.nonNull(.object(GetTag.selections))))),
+      ]
+    }
+
+    public private(set) var resultMap: ResultMap
+
+    public init(unsafeResultMap: ResultMap) {
+      self.resultMap = unsafeResultMap
+    }
+
+    public init(getTagsCategories: [GetTagsCategory], getTags: [GetTag]) {
+      self.init(unsafeResultMap: ["__typename": "Query", "getTagsCategories": getTagsCategories.map { (value: GetTagsCategory) -> ResultMap in value.resultMap }, "getTags": getTags.map { (value: GetTag) -> ResultMap in value.resultMap }])
+    }
+
+    public var getTagsCategories: [GetTagsCategory] {
+      get {
+        return (resultMap["getTagsCategories"] as! [ResultMap]).map { (value: ResultMap) -> GetTagsCategory in GetTagsCategory(unsafeResultMap: value) }
+      }
+      set {
+        resultMap.updateValue(newValue.map { (value: GetTagsCategory) -> ResultMap in value.resultMap }, forKey: "getTagsCategories")
+      }
+    }
+
+    public var getTags: [GetTag] {
+      get {
+        return (resultMap["getTags"] as! [ResultMap]).map { (value: ResultMap) -> GetTag in GetTag(unsafeResultMap: value) }
+      }
+      set {
+        resultMap.updateValue(newValue.map { (value: GetTag) -> ResultMap in value.resultMap }, forKey: "getTags")
+      }
+    }
+
+    public struct GetTagsCategory: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["TagCategory"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("name", type: .nonNull(.scalar(String.self))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(id: GraphQLID, name: String) {
+        self.init(unsafeResultMap: ["__typename": "TagCategory", "id": id, "name": name])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      public var id: GraphQLID {
+        get {
+          return resultMap["id"]! as! GraphQLID
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "id")
+        }
+      }
+
+      public var name: String {
+        get {
+          return resultMap["name"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "name")
+        }
+      }
+    }
+
+    public struct GetTag: GraphQLSelectionSet {
+      public static let possibleTypes: [String] = ["Tag"]
+
+      public static var selections: [GraphQLSelection] {
+        return [
+          GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+          GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+          GraphQLField("name", type: .nonNull(.scalar(String.self))),
+          GraphQLField("color", type: .nonNull(.scalar(String.self))),
+          GraphQLField("category", type: .nonNull(.object(Category.selections))),
+        ]
+      }
+
+      public private(set) var resultMap: ResultMap
+
+      public init(unsafeResultMap: ResultMap) {
+        self.resultMap = unsafeResultMap
+      }
+
+      public init(id: GraphQLID, name: String, color: String, category: Category) {
+        self.init(unsafeResultMap: ["__typename": "Tag", "id": id, "name": name, "color": color, "category": category.resultMap])
+      }
+
+      public var __typename: String {
+        get {
+          return resultMap["__typename"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "__typename")
+        }
+      }
+
+      public var id: GraphQLID {
+        get {
+          return resultMap["id"]! as! GraphQLID
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "id")
+        }
+      }
+
+      public var name: String {
+        get {
+          return resultMap["name"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "name")
+        }
+      }
+
+      public var color: String {
+        get {
+          return resultMap["color"]! as! String
+        }
+        set {
+          resultMap.updateValue(newValue, forKey: "color")
+        }
+      }
+
+      public var category: Category {
+        get {
+          return Category(unsafeResultMap: resultMap["category"]! as! ResultMap)
+        }
+        set {
+          resultMap.updateValue(newValue.resultMap, forKey: "category")
+        }
+      }
+
+      public struct Category: GraphQLSelectionSet {
+        public static let possibleTypes: [String] = ["TagCategory"]
+
+        public static var selections: [GraphQLSelection] {
+          return [
+            GraphQLField("__typename", type: .nonNull(.scalar(String.self))),
+            GraphQLField("id", type: .nonNull(.scalar(GraphQLID.self))),
+            GraphQLField("name", type: .nonNull(.scalar(String.self))),
+          ]
+        }
+
+        public private(set) var resultMap: ResultMap
+
+        public init(unsafeResultMap: ResultMap) {
+          self.resultMap = unsafeResultMap
+        }
+
+        public init(id: GraphQLID, name: String) {
+          self.init(unsafeResultMap: ["__typename": "TagCategory", "id": id, "name": name])
+        }
+
+        public var __typename: String {
+          get {
+            return resultMap["__typename"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "__typename")
+          }
+        }
+
+        public var id: GraphQLID {
+          get {
+            return resultMap["id"]! as! GraphQLID
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "id")
+          }
+        }
+
+        public var name: String {
+          get {
+            return resultMap["name"]! as! String
+          }
+          set {
+            resultMap.updateValue(newValue, forKey: "name")
+          }
         }
       }
     }

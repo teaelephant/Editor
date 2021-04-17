@@ -1,0 +1,7 @@
+mutation createTag($name: String!, $color: String!, $category:ID!){
+    createTag(name: $name, color: $color, category: $category){
+        id
+        name
+        color
+    }
+}

@@ -1,0 +1,5 @@
+mutation addTag($tea:ID!, $tag:ID!){
+    addTagToTea(teaID:$tea, tagID:$tag){
+        id
+    }
+}

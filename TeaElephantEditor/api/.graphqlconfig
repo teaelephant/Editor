@@ -1,10 +1,10 @@
 {
   "name": "Untitled GraphQL Schema",
-  "schemaPath": "schema.graphql",
+  "schemaPath": "../../schema.graphql",
   "extensions": {
     "endpoints": {
       "Default GraphQL Endpoint": {
-        "url": "http://localhost:8080/v2/query",
+        "url": "https://te.xax.cloud/v2/query",
         "headers": {
           "user-agent": "JS GraphQL"
         },

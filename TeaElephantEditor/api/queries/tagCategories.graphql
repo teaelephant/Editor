@@ -1,0 +1,6 @@
+query tagCategories($name: String!){
+    getTagsCategories(name:$name){
+        id
+        name
+    }
+}

@@ -3,6 +3,10 @@ query list{
     id
     name
     type
+    tags{
+      id
+      color
+    }
   }
 }
 

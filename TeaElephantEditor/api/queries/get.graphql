@@ -4,5 +4,14 @@ query get($id: ID!){
         name
         description
         type
+        tags{
+            id
+            name
+            color
+            category{
+                id
+                name
+            }
+        }
     }
 }

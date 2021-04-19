@@ -11,6 +11,7 @@ import Apollo
 class DetailManager: ObservableObject {
 	var id: String
 	@Published var detail: TeaDataWithID?
+	@Published var error: String?
 
 	init(_ id: String) {
 		self.id = id
@@ -18,16 +19,22 @@ class DetailManager: ObservableObject {
 	}
 
 	func loadData(forceReload: Bool = false) {
-		let cachePolicy: CachePolicy
-		if forceReload {
-			cachePolicy = .returnCacheDataAndFetch
-		} else {
-			cachePolicy = .returnCacheDataElseFetch
-		}
+		let cachePolicy: CachePolicy = forceReload ? .returnCacheDataAndFetch : .returnCacheDataElseFetch
 		Network.shared.apollo.fetch(query: GetQuery(id: id), cachePolicy: cachePolicy, resultHandler: { result in
 			switch result {
 			case .success(let graphQLResult):
-				guard let tea = graphQLResult.data!.getTea else {
+				guard let data = graphQLResult.data else {
+					guard let errors = graphQLResult.errors else {
+						print("Failure! Unexpected error")
+						return
+					}
+					if errors.count > 0 {
+						self.error = errors[0].localizedDescription
+					}
+					print("Failure! Error: \(errors)")
+					return
+				}
+				guard let tea = data.getTea else {
 					return
 				}
 				self.detail = TeaDataWithID(
@@ -40,6 +47,7 @@ class DetailManager: ObservableObject {
 								}
 				)
 			case .failure(let error):
+				self.error = error.localizedDescription
 				print("Failure! Error: \(error)")
 			}
 		})
@@ -66,9 +74,11 @@ class DetailManager: ObservableObject {
 				)
 				loadData(forceReload: true)
 			case .failure(let error):
+				self.error = error.localizedDescription
 				print(error)
 			}
 		}
+		loadData(forceReload: true)
 	}
 
 	func create(_ data: TeaData) throws {
@@ -90,9 +100,11 @@ class DetailManager: ObservableObject {
 								tags: []
 				)
 			case .failure(let error):
+				self.error = error.localizedDescription
 				print(error)
 			}
 		}
+		loadData(forceReload: true)
 	}
 
 	func delete() throws {

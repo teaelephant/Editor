@@ -45,17 +45,16 @@ struct Detail: View {
 				}
 				Spacer()
 				TextEditor(text: $description)
-				HStack {
-					Spacer()
-					Button("Delete", action: remove).padding(.horizontal).foregroundColor(.red)
-					Button("Save", action: save).padding(.horizontal).foregroundColor(.green)
-				}
 				if tagsManager != nil {
-					Text("Тэги")
 					if tags.count > 0 {
 						TagsView(tags: tags, remove: tagsManager!.removeTag)
 					}
 					TagSelector(manager: tagsManager!)
+				}
+				HStack {
+					Spacer()
+					Button("Delete", action: remove).padding(.horizontal).foregroundColor(.red)
+					Button("Save", action: save).padding(.horizontal).foregroundColor(.green)
 				}
 			}.padding()
 		}

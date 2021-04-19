@@ -38,19 +38,29 @@ class ListManager: ObservableObject {
 	}
 
 	func loadData(forceReload: Bool = false) {
-		let cachePolicy: CachePolicy
-		if forceReload {
-			cachePolicy = .returnCacheDataAndFetch
-		} else {
-			cachePolicy = .returnCacheDataElseFetch
-		}
+		let cachePolicy: CachePolicy = forceReload ? .returnCacheDataAndFetch : .returnCacheDataElseFetch
 		Network.shared.apollo.fetch(query: ListQuery(), cachePolicy: cachePolicy, resultHandler: { result in
 			switch result {
 			case .success(let graphQLResult):
-				self.list = graphQLResult.data!.getTeas.map { tea in
-					TeaListElement(ID: tea.id, name: tea.name, type: TeaType.tea, tags: tea.tags.map { tag in
-						ListTag(id: tag.id, color: tag.color)
-					})
+				guard let data = graphQLResult.data else {
+					guard let errors = graphQLResult.errors else {
+						print("Failure! Unexpected error")
+						return
+					}
+					if errors.count > 0 {
+						self.error = errors[0].localizedDescription
+					}
+					print("Failure! Error: \(errors)")
+					return
+				}
+				self.list = data.getTeas.map { tea in
+					TeaListElement(
+									ID: tea.id,
+									name: tea.name,
+									type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
+									tags: tea.tags.map { tag in
+										ListTag(id: tag.id, color: tag.color)
+									})
 				}
 			case .failure(let error):
 				self.error = error.localizedDescription
@@ -90,6 +100,7 @@ class ListManager: ObservableObject {
 					if let row = self.list.firstIndex(where: { $0.ID == tea.id }) {
 						self.list[row] = TeaListElement(ID: tea.id, name: tea.name, type: TeaType.tea, tags: [])
 					}
+					self.loadData(forceReload: true)
 				} // else, something went wrong and you should check `graphQLResult.error` for problems
 			case .failure(let error):
 				// Not included here: Show some kind of alert

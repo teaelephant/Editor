@@ -20,6 +20,9 @@ struct DetailController: View {
 			Text("Loading...")
 		} else {
 			Detail(update: manager.update, delete: manager.delete, tea: manager.detail!, id: manager.id)
+							.alert(item: $manager.error) { err in
+								Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
+							}
 		}
 	}
 }

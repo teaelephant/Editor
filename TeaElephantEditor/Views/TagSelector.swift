@@ -48,6 +48,8 @@ struct TagSelector: View {
 			}, label: {
 				Image(systemName: "plus.circle.fill").foregroundColor(.green)
 			}).disabled(selectedTag == nil)
+		}.alert(item: $manager.error)  { err in
+			Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
 		}
 	}
 }

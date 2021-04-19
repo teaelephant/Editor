@@ -11,6 +11,7 @@ import Apollo
 class TagsSelectManager: ObservableObject {
 	@Published var categories = [TagCategory]()
 	@Published var tags = [Tag]()
+	@Published var error: String?
 	var tea: String
 
 	init(_ tea: String) {
@@ -19,12 +20,7 @@ class TagsSelectManager: ObservableObject {
 	}
 
 	func loadData(forceReload: Bool = false) {
-		let cachePolicy: CachePolicy
-		if forceReload {
-			cachePolicy = .returnCacheDataAndFetch
-		} else {
-			cachePolicy = .returnCacheDataElseFetch
-		}
+		let cachePolicy: CachePolicy = forceReload ? .returnCacheDataAndFetch : .returnCacheDataElseFetch
 		Network.shared.apollo.fetch(query: TagsMetaQuery(), cachePolicy: cachePolicy, resultHandler: { result in
 			switch result {
 			case .success(let graphQLResult):
@@ -39,6 +35,7 @@ class TagsSelectManager: ObservableObject {
 				}
 				print(self.categories)
 			case .failure(let error):
+				self.error = error.localizedDescription
 				print("Failure! Error: \(error)")
 			}
 		})

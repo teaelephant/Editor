@@ -24,7 +24,7 @@ struct Table: View {
 									}).foregroundColor(.green)
 				}
 				NavigationLink(
-								destination: TagsEditor(),
+								destination: TagsEditor.Controller(),
 								label: {
 									Text("tags editor")
 								}).foregroundColor(.orange)
@@ -46,6 +46,8 @@ struct Table: View {
 									})
 				}
 			}
+		}.alert(item: $manager.error)  { err in
+			Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
 		}
 	}
 }

@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct TagCategory: Codable {
-    let id: String
-    let name: String
+struct TagCategory: Codable, Identifiable, Hashable {
+	let id: String
+	let name: String
 }
 
 struct Tag: Codable {
-    let id: String
-    let name: String
-    let color: String
-    let category: TagCategory
+	let id: String
+	let name: String
+	let color: String
+	let category: TagCategory
 }

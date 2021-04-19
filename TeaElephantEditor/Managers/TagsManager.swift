@@ -34,7 +34,7 @@ class TagsManager: ObservableObject {
 					return
 				}
 				print("category \(cat.name)")
-				self.tags = data.getTags.map { tag in
+				tags = data.getTags.map { tag in
 					Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: "", name: ""))
 				}
 			case .failure(let error):
@@ -56,6 +56,7 @@ class TagsManager: ObservableObject {
 			return
 		}
 		Network.shared.apollo.perform(mutation: CreateTagMutation(name: name, color: color.hex(), category: cat.id))
+		loadData(forceReload: true)
 	}
 
 	func setCategory(_ cat: TagCategory?) {

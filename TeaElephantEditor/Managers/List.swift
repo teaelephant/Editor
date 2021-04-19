@@ -13,6 +13,7 @@ extension String: Identifiable {
 
 class ListManager: ObservableObject {
 	@Published var list: [TeaListElement]
+	@Published var error: String?
 	var onCreate: Cancellable?
 	var onUpdate: Cancellable?
 	var onDelete: Cancellable?
@@ -52,6 +53,7 @@ class ListManager: ObservableObject {
 					})
 				}
 			case .failure(let error):
+				self.error = error.localizedDescription
 				print("Failure! Error: \(error)")
 			}
 		})

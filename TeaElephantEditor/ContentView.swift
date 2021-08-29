@@ -7,12 +7,14 @@
 
 import SwiftUI
 
+@available(macOS 12.0.0, *)
 struct ContentView: View {
 	var body: some View {
 		Table()
 	}
 }
 
+@available(macOS 12.0.0, *)
 struct ContentView_Previews: PreviewProvider {
 	static var previews: some View {
 		ContentView()

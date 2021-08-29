@@ -7,16 +7,17 @@
 
 import SwiftUI
 
+@available(macOS 12.0.0, *)
 struct Detail: View {
-	var update: (TeaData) throws -> Void
-	var delete: () throws -> Void
+	var update: (TeaData) async throws -> Void
+	var delete: () async throws -> Void
 	var tagsManager: TagsSelectManager?
 	@State private var name = ""
 	@State private var type = TeaType.tea
 	@State private var description = ""
 	@State private var tags = [Tag]()
 
-	init(update: @escaping (TeaData) throws -> Void, delete: @escaping () throws -> Void, tea: TeaDataWithID?, id: String?) {
+	init(update: @escaping (TeaData) async throws -> Void, delete: @escaping () async throws -> Void, tea: TeaDataWithID?, id: String?) {
 		self.update = update
 		self.delete = delete
 
@@ -53,25 +54,33 @@ struct Detail: View {
 				}
 				HStack {
 					Spacer()
-					Button("Delete", action: remove).padding(.horizontal).foregroundColor(.red)
-					Button("Save", action: save).padding(.horizontal).foregroundColor(.green)
+                    Button("Delete", action: {
+                        Task.init{
+                            await remove()
+                        }
+                        }).padding(.horizontal).foregroundColor(.red)
+                    Button("Save", action: {
+                        Task{
+                            await save()
+                        }
+                    }).padding(.horizontal).foregroundColor(.green)
 				}
 			}.padding()
 		}
 	}
 
-	func remove() {
+	func remove() async {
 		do {
-			try delete()
+			try await delete()
 		} catch {
 			print(error)
 			return
 		}
 	}
 
-	func save() {
+    func save() async {
 		do {
-			try update(TeaData(name: name, type: Type(rawValue: type.rawValue)!, description: description))
+			try await update(TeaData(name: name, type: Type(rawValue: type.rawValue)!, description: description))
 		} catch {
 			print(error)
 			return
@@ -88,6 +97,7 @@ struct Demo {
 	}
 }
 
+@available(macOS 12.0.0, *)
 struct Detail_Previews: PreviewProvider {
 	static var previews: some View {
 		Detail(update: Demo().save, delete: Demo().remove, tea: TeaDataWithID(ID: "", name: "", type: TeaType.tea, description: "", tags: []), id: nil)

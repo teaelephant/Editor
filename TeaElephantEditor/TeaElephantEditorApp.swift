@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(macOS 12.0.0, *)
 @main
 struct TeaElephantEditorApp: App {
     var body: some Scene {

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(macOS 12.0.0, *)
 struct Table: View {
 	@ObservedObject private var manager = ListManager()
 	@State var newData: TeaDataWithID = TeaDataWithID(ID: "", name: "", type: TeaType.tea, description: "", tags: [])
@@ -14,7 +15,7 @@ struct Table: View {
 		NavigationView {
 			VStack {
 				HStack {
-					Button(action: { manager.loadData(forceReload: true) }) {
+                    Button(action: { Task.init { await manager.loadData(forceReload: true)} }) {
 						Image(systemName: "arrow.2.circlepath")
 					}.foregroundColor(.blue)
 					NavigationLink(
@@ -45,7 +46,9 @@ struct Table: View {
 										}
 									})
 				}
-			}
+            }.task {
+                await manager.loadData()
+            }
 		}.alert(item: $manager.error)  { err in
 			Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
 		}
@@ -53,6 +56,7 @@ struct Table: View {
 }
 
 
+@available(macOS 12.0.0, *)
 struct Table_Previews: PreviewProvider {
 	static var previews: some View {
 		Table()

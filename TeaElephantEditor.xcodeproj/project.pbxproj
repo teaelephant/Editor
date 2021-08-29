@@ -43,6 +43,12 @@
 		4B9E9B7225CF4661006D8EB4 /* TagsSelectManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9E9B7125CF4661006D8EB4 /* TagsSelectManager.swift */; };
 		4B9E9B7625CF46A5006D8EB4 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B9E9B7525CF46A5006D8EB4 /* Tag.swift */; };
 		4BDE5B0625ACFF9E005BBBC5 /* TeaInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BDE5B0525ACFF9E005BBBC5 /* TeaInfo.swift */; };
+		4BECF5FB26DB9B6E00027292 /* ApolloCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA93D25B25AE800F98920 /* ApolloCore */; };
+		4BECF5FC26DB9B6E00027292 /* ApolloWebSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA93F25B25AE800F98920 /* ApolloWebSocket */; };
+		4BECF5FD26DB9B6E00027292 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA94125B25AE800F98920 /* Apollo */; };
+		4BECF5FE26DB9B6E00027292 /* ApolloCodegenLib in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA94625B25AE800F98920 /* ApolloCodegenLib */; };
+		4BECF5FF26DB9B6E00027292 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = 4B39B2B6262CB12E0061788B /* Regex */; };
+		4BECF60126DB9B8D00027292 /* ApolloClientExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECF60026DB9B8D00027292 /* ApolloClientExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,6 +131,7 @@
 		4B9E9B7125CF4661006D8EB4 /* TagsSelectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsSelectManager.swift; sourceTree = "<group>"; };
 		4B9E9B7525CF46A5006D8EB4 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		4BDE5B0525ACFF9E005BBBC5 /* TeaInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaInfo.swift; sourceTree = "<group>"; };
+		4BECF60026DB9B8D00027292 /* ApolloClientExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloClientExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +139,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BECF5FB26DB9B6E00027292 /* ApolloCore in Frameworks */,
+				4BECF5FD26DB9B6E00027292 /* Apollo in Frameworks */,
+				4BECF5FF26DB9B6E00027292 /* Regex in Frameworks */,
+				4BECF5FC26DB9B6E00027292 /* ApolloWebSocket in Frameworks */,
+				4BECF5FE26DB9B6E00027292 /* ApolloCodegenLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,6 +300,7 @@
 				1CEAFFCAE4A08E4B57B50AEE /* Controllers */,
 				1CEAF5AE0DD32CAD06FB4D53 /* TagsEditor */,
 				1CEAFD1A1716974F75F087FF /* Helpers */,
+				4BECF60026DB9B8D00027292 /* ApolloClientExtension.swift */,
 			);
 			path = TeaElephantEditor;
 			sourceTree = "<group>";
@@ -346,11 +359,11 @@
 			);
 			name = TeaElephantEditor;
 			packageProductDependencies = (
-				4B0BA93D25B25AE800F98920,
-				4B0BA93F25B25AE800F98920,
-				4B0BA94125B25AE800F98920,
-				4B0BA94625B25AE800F98920,
-				4B39B2B6262CB12E0061788B,
+				4B0BA93D25B25AE800F98920 /* ApolloCore */,
+				4B0BA93F25B25AE800F98920 /* ApolloWebSocket */,
+				4B0BA94125B25AE800F98920 /* Apollo */,
+				4B0BA94625B25AE800F98920 /* ApolloCodegenLib */,
+				4B39B2B6262CB12E0061788B /* Regex */,
 			);
 			productName = TeaElephantEditor;
 			productReference = 4B804AF225ACFB1800BE1BD0 /* TeaElephantEditor.app */;
@@ -424,8 +437,8 @@
 			);
 			mainGroup = 4B804AE925ACFB1800BE1BD0;
 			packageReferences = (
-				4B0BA93C25B25AE800F98920,
-				4B39B2B5262CB12E0061788B,
+				4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */,
+				4B39B2B5262CB12E0061788B /* XCRemoteSwiftPackageReference "Regex" */,
 			);
 			productRefGroup = 4B804AF325ACFB1800BE1BD0 /* Products */;
 			projectDirPath = "";
@@ -519,6 +532,7 @@
 				1CEAFCE6A63081376D8D9729 /* Controller.swift in Sources */,
 				1CEAFBC7C61EEFF9821FB933 /* Manager.swift in Sources */,
 				1CEAF9E23D0AB837C4B71E98 /* View.swift in Sources */,
+				4BECF60126DB9B8D00027292 /* ApolloClientExtension.swift in Sources */,
 				1CEAF676E8A2582FAABEEC09 /* CategoryView.swift in Sources */,
 				1CEAF6141ED60E33AACFFE09 /* validation.swift in Sources */,
 				1CEAF7E0CB58DCADD09DC35E /* Model.swift in Sources */,
@@ -850,7 +864,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		4B0BA93C25B25AE800F98920 = {
+		4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apollographql/apollo-ios.git";
 			requirement = {
@@ -858,7 +872,7 @@
 				minimumVersion = 0.40.0;
 			};
 		};
-		4B39B2B5262CB12E0061788B = {
+		4B39B2B5262CB12E0061788B /* XCRemoteSwiftPackageReference "Regex" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/crossroadlabs/Regex.git";
 			requirement = {
@@ -869,29 +883,29 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4B0BA93D25B25AE800F98920 = {
+		4B0BA93D25B25AE800F98920 /* ApolloCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4B0BA93C25B25AE800F98920;
+			package = 4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */;
 			productName = ApolloCore;
 		};
-		4B0BA93F25B25AE800F98920 = {
+		4B0BA93F25B25AE800F98920 /* ApolloWebSocket */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4B0BA93C25B25AE800F98920;
+			package = 4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */;
 			productName = ApolloWebSocket;
 		};
-		4B0BA94125B25AE800F98920 = {
+		4B0BA94125B25AE800F98920 /* Apollo */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4B0BA93C25B25AE800F98920;
+			package = 4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */;
 			productName = Apollo;
 		};
-		4B0BA94625B25AE800F98920 = {
+		4B0BA94625B25AE800F98920 /* ApolloCodegenLib */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4B0BA93C25B25AE800F98920;
+			package = 4B0BA93C25B25AE800F98920 /* XCRemoteSwiftPackageReference "apollo-ios" */;
 			productName = ApolloCodegenLib;
 		};
-		4B39B2B6262CB12E0061788B = {
+		4B39B2B6262CB12E0061788B /* Regex */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 4B39B2B5262CB12E0061788B;
+			package = 4B39B2B5262CB12E0061788B /* XCRemoteSwiftPackageReference "Regex" */;
 			productName = Regex;
 		};
 /* End XCSwiftPackageProductDependency section */

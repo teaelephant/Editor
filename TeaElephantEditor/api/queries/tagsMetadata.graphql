@@ -1,5 +1,5 @@
 query tagsMeta {
-    getTagsCategories {
+    tagsCategories {
         id
         name
     }

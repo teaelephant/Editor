@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@available(macOS 12.0.0, *)
 struct TagSelector: View {
 	@ObservedObject var manager: TagsSelectManager
 	@State private var selectedTag: Tag?
@@ -43,17 +44,22 @@ struct TagSelector: View {
 			}
 			Button(action: {
 				if selectedTag != nil {
-					manager.addTag(selectedTag!)
+					Task{
+						await manager.addTag(selectedTag!)
+					}
 				}
 			}, label: {
 				Image(systemName: "plus.circle.fill").foregroundColor(.green)
 			}).disabled(selectedTag == nil)
-		}.alert(item: $manager.error)  { err in
+        }.task {
+            await manager.loadData()
+        }.alert(item: $manager.error)  { err in
 			Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
 		}
 	}
 }
 
+@available(macOS 12.0.0, *)
 struct TagSelector_Previews: PreviewProvider {
 	static var previews: some View {
 		TagSelector(manager: TagsSelectManager(""))

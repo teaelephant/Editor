@@ -1,5 +1,5 @@
 query tagCategories($name: String!){
-    getTagsCategories(name:$name){
+    tagsCategories(name:$name){
         id
         name
     }

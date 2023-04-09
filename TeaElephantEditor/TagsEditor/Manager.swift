@@ -5,6 +5,7 @@
 import Foundation
 import Apollo
 import SwiftUI
+import TeaElephantSchema
 
 extension TagsEditor {
 	class Manager: ObservableObject {
@@ -24,12 +25,12 @@ extension TagsEditor {
 			}
 			let cachePolicy: CachePolicy
 			if forceReload {
-				cachePolicy = .returnCacheDataAndFetch
+				cachePolicy = .fetchIgnoringCacheData
 			} else {
 				cachePolicy = .returnCacheDataElseFetch
 			}
 			print("running category \(cat.name)")
-			Network.shared.apollo.fetch(query: TagsQuery(name: model.name, category: cat.id), cachePolicy: cachePolicy, resultHandler: { [self] result in
+			Network.shared.apollo.fetch(query: TagsQuery(name: .some(model.name), category: cat.id), cachePolicy: cachePolicy, resultHandler: { [self] result in
 				switch result {
 				case .success(let graphQLResult):
 					guard let data = graphQLResult.data else {
@@ -65,6 +66,7 @@ extension TagsEditor {
 			loadData()
 		}
 	}
+
 	class CategoryManager: ObservableObject {
 		@Published var categories = [TagCategory]()
 		@Published var name = ""
@@ -82,7 +84,7 @@ extension TagsEditor {
 					guard let data = graphQLResult.data else {
 						return
 					}
-					self.categories = data.getTagsCategories.map { category in
+					self.categories = data.tagsCategories.map { category in
 						TagCategory(id: category.id, name: category.name)
 					}
 				case .failure(let error):

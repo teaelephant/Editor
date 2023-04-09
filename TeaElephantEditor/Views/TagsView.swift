@@ -4,15 +4,18 @@
 
 import SwiftUI
 
+@available(macOS 12.0, *)
 struct TagsView: View {
 	var tags: [Tag]
-	var remove: (Tag) -> Void
+	var remove: (Tag) async -> Void
 	var body: some View {
 		ForEach(tags, id: \.self.id) { tag in
 			HStack {
 				Text(tag.category.name)
 				Text(tag.name)
-				Button(action: { remove(tag) }, label: {
+				Button(action: { Task {
+					await remove(tag)
+				} }, label: {
 					Image(systemName: "trash.fill").foregroundColor(.red)
 				})
 			}.foregroundColor(Color(hex: tag.color))

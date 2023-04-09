@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TeaElephantSchema
 
 @available(macOS 12.0.0, *)
 struct Detail: View {
@@ -80,7 +81,7 @@ struct Detail: View {
 
     func save() async {
 		do {
-			try await update(TeaData(name: name, type: Type(rawValue: type.rawValue)!, description: description))
+			try await update(TeaData(name: name, type: GraphQLEnum(Type(rawValue: type.rawValue)!), description: description))
 		} catch {
 			print(error)
 			return

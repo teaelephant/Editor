@@ -7,6 +7,7 @@
 
 import Foundation
 import Apollo
+import TeaElephantSchema
 
 @available(macOS 12.0.0, *)
 extension ApolloClient {

@@ -44,7 +44,9 @@ struct TagSelector: View {
 			}
 			Button(action: {
 				if selectedTag != nil {
-					manager.addTag(selectedTag!)
+					Task{
+						await manager.addTag(selectedTag!)
+					}
 				}
 			}, label: {
 				Image(systemName: "plus.circle.fill").foregroundColor(.green)

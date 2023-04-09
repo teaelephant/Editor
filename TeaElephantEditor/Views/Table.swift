@@ -15,7 +15,9 @@ struct Table: View {
 		NavigationView {
 			VStack {
 				HStack {
-                    Button(action: { Task.init { await manager.loadData(forceReload: true)} }) {
+					Button(action: { Task.init {
+						await manager.loadData(forceReload: true)
+					} }) {
 						Image(systemName: "arrow.2.circlepath")
 					}.foregroundColor(.blue)
 					NavigationLink(
@@ -46,10 +48,10 @@ struct Table: View {
 										}
 									})
 				}
-            }.task {
-                await manager.loadData()
-            }
-		}.alert(item: $manager.error)  { err in
+			}.task {
+				await manager.loadData()
+			}
+		}.alert(item: $manager.error) { err in
 			Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
 		}
 	}

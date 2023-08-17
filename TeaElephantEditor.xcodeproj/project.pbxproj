@@ -32,6 +32,7 @@
 		1CEAFFC80A3FBB7EA3BE06E1 /* tagCategories.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAF93AB6DDABBB3F166B14 /* tagCategories.graphql */; };
 		1CEAFFF1DF69A53C9ED43C93 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEAF48509093FF7281BF2B9 /* List.swift */; };
 		4B0B028225B26515006C32AE /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B0B028125B26515006C32AE /* Network.swift */; };
+		4B1B06242A7A944C00A332E1 /* ApolloClientExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B1B06232A7A944C00A332E1 /* ApolloClientExtension.swift */; };
 		4B33817129E2778900E9407E /* TeaElephantSchema in Frameworks */ = {isa = PBXBuildFile; productRef = 4B33817029E2778900E9407E /* TeaElephantSchema */; };
 		4B4ABF9D25AE42AD002095E6 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B4ABF9C25AE42AD002095E6 /* DetailView.swift */; };
 		4B7D570325AD01C100790BC0 /* Table.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B7D570225AD01C100790BC0 /* Table.swift */; };
@@ -48,7 +49,7 @@
 		4BECF5FC26DB9B6E00027292 /* ApolloWebSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA93F25B25AE800F98920 /* ApolloWebSocket */; };
 		4BECF5FD26DB9B6E00027292 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA94125B25AE800F98920 /* Apollo */; };
 		4BECF5FF26DB9B6E00027292 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = 4B39B2B6262CB12E0061788B /* Regex */; };
-		4BECF60126DB9B8D00027292 /* ApolloClientExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BECF60026DB9B8D00027292 /* ApolloClientExtension.swift */; };
+		4BEED9AC2A8E06BC008BB9F8 /* descGen.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 4BEED9AB2A8E06BC008BB9F8 /* descGen.graphql */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +113,7 @@
 		1CEAFF2E749726AC88A77755 /* apollo-codegen-config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
 		1CEAFF86024512F3896512F5 /* validation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = validation.swift; sourceTree = "<group>"; };
 		4B0B028125B26515006C32AE /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		4B1B06232A7A944C00A332E1 /* ApolloClientExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApolloClientExtension.swift; sourceTree = "<group>"; };
 		4B33816E29E2776000E9407E /* schema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = schema; path = TeaElephantEditor/api/schema; sourceTree = "<group>"; };
 		4B4ABF9C25AE42AD002095E6 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		4B7D570225AD01C100790BC0 /* Table.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Table.swift; sourceTree = "<group>"; };
@@ -132,7 +134,7 @@
 		4B9E9B7125CF4661006D8EB4 /* TagsSelectManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsSelectManager.swift; sourceTree = "<group>"; };
 		4B9E9B7525CF46A5006D8EB4 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		4BDE5B0525ACFF9E005BBBC5 /* TeaInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaInfo.swift; sourceTree = "<group>"; };
-		4BECF60026DB9B8D00027292 /* ApolloClientExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApolloClientExtension.swift; sourceTree = "<group>"; };
+		4BEED9AB2A8E06BC008BB9F8 /* descGen.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = descGen.graphql; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +194,7 @@
 				1CEAFF280FA6BA75340E2F2D /* tagsMetadata.graphql */,
 				1CEAF93AB6DDABBB3F166B14 /* tagCategories.graphql */,
 				1CEAFDB1D0F3D98531CBC7C2 /* tags.graphql */,
+				4BEED9AB2A8E06BC008BB9F8 /* descGen.graphql */,
 			);
 			path = queries;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 		4B804AF425ACFB1800BE1BD0 /* TeaElephantEditor */ = {
 			isa = PBXGroup;
 			children = (
+				4B1B06232A7A944C00A332E1 /* ApolloClientExtension.swift */,
 				4B7D570125AD01AC00790BC0 /* Views */,
 				4BDE5B0425ACFF61005BBBC5 /* Models */,
 				4B804AF525ACFB1800BE1BD0 /* TeaElephantEditorApp.swift */,
@@ -316,7 +320,6 @@
 				1CEAFFCAE4A08E4B57B50AEE /* Controllers */,
 				1CEAF5AE0DD32CAD06FB4D53 /* TagsEditor */,
 				1CEAFD1A1716974F75F087FF /* Helpers */,
-				4BECF60026DB9B8D00027292 /* ApolloClientExtension.swift */,
 				1CEAFF2E749726AC88A77755 /* apollo-codegen-config.json */,
 			);
 			path = TeaElephantEditor;
@@ -474,6 +477,7 @@
 			files = (
 				4B804AFD25ACFB1900BE1BD0 /* Preview Assets.xcassets in Resources */,
 				4B804AFA25ACFB1900BE1BD0 /* Assets.xcassets in Resources */,
+				4BEED9AC2A8E06BC008BB9F8 /* descGen.graphql in Resources */,
 				1CEAF7EE2961842EBC68F589 /* list.graphql in Resources */,
 				1CEAF6FFD8777AECF389113F /* get.graphql in Resources */,
 				1CEAF931206558A790B9D7B8 /* onUpdate.graphql in Resources */,
@@ -515,6 +519,7 @@
 				4B4ABF9D25AE42AD002095E6 /* DetailView.swift in Sources */,
 				4B804AF825ACFB1800BE1BD0 /* ContentView.swift in Sources */,
 				4B7D570325AD01C100790BC0 /* Table.swift in Sources */,
+				4B1B06242A7A944C00A332E1 /* ApolloClientExtension.swift in Sources */,
 				4B9E9B6E25CF4105006D8EB4 /* TagSelector.swift in Sources */,
 				4B804AF625ACFB1800BE1BD0 /* TeaElephantEditorApp.swift in Sources */,
 				4B0B028225B26515006C32AE /* Network.swift in Sources */,
@@ -528,7 +533,6 @@
 				1CEAFCE6A63081376D8D9729 /* Controller.swift in Sources */,
 				1CEAFBC7C61EEFF9821FB933 /* Manager.swift in Sources */,
 				1CEAF9E23D0AB837C4B71E98 /* View.swift in Sources */,
-				4BECF60126DB9B8D00027292 /* ApolloClientExtension.swift in Sources */,
 				1CEAF676E8A2582FAABEEC09 /* CategoryView.swift in Sources */,
 				1CEAF6141ED60E33AACFFE09 /* validation.swift in Sources */,
 				1CEAF7E0CB58DCADD09DC35E /* Model.swift in Sources */,
@@ -704,7 +708,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				OTHER_LDFLAGS = "\"-Xlinker -interposable\"";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = xax.TeaElephantEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -731,7 +735,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				OTHER_LDFLAGS = "\"-Xlinker -interposable\"";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = xax.TeaElephantEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -873,7 +877,7 @@
 			repositoryURL = "https://github.com/apollographql/apollo-ios.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
+				minimumVersion = 1.3.0;
 			};
 		};
 		4B39B2B5262CB12E0061788B /* XCRemoteSwiftPackageReference "Regex" */ = {

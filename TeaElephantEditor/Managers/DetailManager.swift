@@ -15,44 +15,48 @@ class DetailManager: ObservableObject {
 	var id: String
 	@Published var detail: TeaDataWithID?
 	@Published var error: String?
+    @Published var saved = false
 
 	init(_ id: String) {
 		self.id = id
+        self.saved = false
 	}
 
 	@MainActor
 	func loadData(forceReload: Bool = false) async {
-		let cachePolicy: CachePolicy = forceReload ? .fetchIgnoringCacheCompletely : .returnCacheDataElseFetch
-		let result = await Network.shared.apollo.fetchAsync(query: GetQuery(id: id), cachePolicy: cachePolicy)
-		switch result {
-		case .success(let graphQLResult):
-			guard let data = graphQLResult.data else {
-				guard let errors = graphQLResult.errors else {
-					print("Failure! Unexpected error")
-					return
-				}
-				if errors.count > 0 {
-					error = errors[0].localizedDescription
-				}
-				print("Failure! Error: \(errors)")
-				return
-			}
-			guard let tea = data.tea else {
-				return
-			}
-			detail = TeaDataWithID(
-							ID: tea.id,
-							name: tea.name,
-							type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
-							description: tea.description,
-							tags: tea.tags.map { tag in
-								Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: tag.category.id, name: tag.category.name))
-							}
-			)
-		case .failure(let error):
-			self.error = error.localizedDescription
-			print("Failure! Error: \(error)")
-		}
+		let cachePolicy: CachePolicy = forceReload ? .fetchIgnoringCacheData : .returnCacheDataElseFetch
+        do {
+            for try await result in Network.shared.apollo.fetchAsync(query: GetQuery(id: id), cachePolicy: cachePolicy) {
+                guard let data = result.data else {
+                    guard let errors = result.errors else {
+                        print("Failure! Unexpected error")
+                        return
+                    }
+                    if errors.count > 0 {
+                        error = errors[0].localizedDescription
+                    }
+                    print("Failure! Error: \(errors)")
+                    return
+                }
+                guard let tea = data.tea else {
+                    return
+                }
+                DispatchQueue.main.async {
+                    self.detail = TeaDataWithID(
+                        ID: tea.id,
+                        name: tea.name,
+                        type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
+                        description: tea.description,
+                        tags: tea.tags.map { tag in
+                            Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: tag.category.id, name: tag.category.name))
+                        }
+                    )
+                }
+            }
+        } catch {
+            self.error = error.localizedDescription
+            print("Failure! Error: \(error)")
+        }
 	}
 
 	func update(_ data: TeaData) async throws {
@@ -67,18 +71,23 @@ class DetailManager: ObservableObject {
 				print("updatedTea is nil")
 				return
 			}
-			detail = TeaDataWithID(
-							ID: id,
-							name: updatedTea.name,
-							type: TeaType(rawValue: updatedTea.type.rawValue)!,
-							description: updatedTea.description,
-							tags: []
-			)
+            DispatchQueue.main.async {
+                self.detail = TeaDataWithID(
+                    ID: self.id,
+                    name: updatedTea.name,
+                    type: TeaType(rawValue: updatedTea.type.rawValue)!,
+                    description: updatedTea.description,
+                    tags: []
+                )
+            }
 		case .failure(let error):
 			self.error = error.localizedDescription
 			print(error)
 		}
 		await loadData(forceReload: true)
+        DispatchQueue.main.async {
+            self.saved = true
+        }
 	}
 
 	func create(_ data: TeaData) async throws {
@@ -104,6 +113,7 @@ class DetailManager: ObservableObject {
 			print(error)
 		}
 		await loadData(forceReload: true)
+        self.saved = true
 	}
 
 	func delete() async throws {

@@ -6,35 +6,41 @@ import SwiftUI
 
 @available(macOS 12.0.0, *)
 struct DetailController: View {
-	var id: String
-	@ObservedObject var manager: DetailManager
-
-	init(id: String) {
-		self.id = id
-		manager = DetailManager(id)
-	}
-
-	var body: some View {
+    var id: String
+    @ObservedObject var manager: DetailManager
+    
+    init(id: String) {
+        self.id = id
+        manager = DetailManager(id)
+    }
+    
+    var body: some View {
         Group{
             if id == "" {
-                Detail(update: manager.create, delete: manager.delete, tea: nil, id: nil)
+                Detail(
+                    update: manager.create,
+                    delete: manager.delete,
+                    tea: nil,
+                    id: nil,
+                    saved: $manager.saved
+                )
             } else if manager.detail == nil {
-                ProgressView()
+                ProgressView().task{
+                    await manager.loadData()
+                }
             } else {
-                Detail(update: manager.update, delete: manager.delete, tea: manager.detail!, id: manager.id)
-                                .alert(item: $manager.error) { err in
-                                    Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
-                                }
+                Detail(update: manager.update, delete: manager.delete, tea: manager.detail!, id: manager.id, saved: $manager.saved)
+                    .alert(item: $manager.error) { err in
+                        Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
+                    }
             }
-        }.task{
-            await manager.loadData()
         }
     }
 }
 
 @available(macOS 12.0.0, *)
 struct DetailController_Previews: PreviewProvider {
-	static var previews: some View {
-		DetailController(id: "")
-	}
+    static var previews: some View {
+        DetailController(id: "")
+    }
 }

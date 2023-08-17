@@ -30,16 +30,19 @@ extension TagsEditor {
 				cachePolicy = .returnCacheDataElseFetch
 			}
 			print("running category \(cat.name)")
-			Network.shared.apollo.fetch(query: TagsQuery(name: .some(model.name), category: cat.id), cachePolicy: cachePolicy, resultHandler: { [self] result in
+            Network.shared.apollo.fetch(query: TagsQuery(name: .some(model.name), category: .some(cat.name)), cachePolicy: cachePolicy, resultHandler: { [self] result in
 				switch result {
 				case .success(let graphQLResult):
 					guard let data = graphQLResult.data else {
 						return
 					}
 					print("category \(cat.name)")
-					tags = data.getTags.map { tag in
-						Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: "", name: ""))
-					}
+                    tags.removeAll()
+                    for category in data.tagsCategories {
+                        for tag in category.tags {
+                            tags.append(Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: category.id, name: category.name)))
+                        }
+                    }
 				case .failure(let error):
 					self.error = error.localizedDescription
 					print("Failure! Error: \(error)")

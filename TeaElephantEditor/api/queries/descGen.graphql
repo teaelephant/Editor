@@ -1,0 +1,3 @@
+query descGen($name:String!){
+  generateDescription(name:$name)
+}

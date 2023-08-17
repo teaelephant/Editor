@@ -1,15 +1,11 @@
 query tagsMeta {
-    tagsCategories {
-        id
-        name
+  tagsCategories{
+    id
+    name
+    tags{
+      id
+      name
+      color
     }
-    getTags {
-        id
-        name
-        color
-        category {
-            id
-            name
-        }
-    }
+  }
 }

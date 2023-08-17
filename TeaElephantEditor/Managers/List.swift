@@ -40,34 +40,34 @@ class ListManager: ObservableObject {
 	@MainActor
 	func loadData(forceReload: Bool = false) async -> Void {
 		let cachePolicy: CachePolicy = forceReload ? .fetchIgnoringCacheData : .returnCacheDataElseFetch
-		let result = await Network.shared.apollo.fetchAsync(query: ListQuery(), cachePolicy: cachePolicy)
-		switch result {
-		case .success(let graphQLResult):
-			guard let data = graphQLResult.data else {
-				guard let errors = graphQLResult.errors else {
-					print("Failure! Unexpected error")
-					return
-				}
-				if errors.count > 0 {
-					self.error = errors[0].localizedDescription
-				}
-				print("Failure! Error: \(errors)")
-				return
-			}
-			self.list = data.teas.map { tea in
-				TeaListElement(
-								ID: tea.id,
-								name: tea.name,
-								type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
-								tags: tea.tags.map { tag in
-									ListTag(id: tag.id, color: tag.color)
-								})
-			}
-			subscribeOnChange()
-		case .failure(let error):
-			self.error = error.localizedDescription
-			print("Failure! Error: \(error)")
-		}
+        do {
+            for try await result in Network.shared.apollo.fetchAsync(query: ListQuery(), cachePolicy: cachePolicy) {
+                guard let data = result.data else {
+                    guard let errors = result.errors else {
+                        print("Failure! Unexpected error")
+                        return
+                    }
+                    if errors.count > 0 {
+                        self.error = errors[0].localizedDescription
+                    }
+                    print("Failure! Error: \(errors)")
+                    return
+                }
+                self.list = data.teas.map { tea in
+                    TeaListElement(
+                                    ID: tea.id,
+                                    name: tea.name,
+                                    type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
+                                    tags: tea.tags.map { tag in
+                                        ListTag(id: tag.id, color: tag.color)
+                                    })
+                }
+                subscribeOnChange()
+            }
+        } catch {
+            self.error = error.localizedDescription
+            print("Failure! Error: \(error)")
+        }
 	}
 
 	func subscribeOnChange() {

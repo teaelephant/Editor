@@ -4,7 +4,7 @@
   "extensions": {
     "endpoints": {
       "Default GraphQL Endpoint": {
-        "url": "https://te.xax.cloud/v2/query",
+        "url": "https://tea-elephant.com/v2/query",
         "headers": {
           "user-agent": "JS GraphQL"
         },

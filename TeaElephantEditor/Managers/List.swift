@@ -80,7 +80,7 @@ class ListManager: ObservableObject {
 			switch result {
 			case .success(let graphQLResult):
 				if let tea = graphQLResult.data?.onCreateTea {
-					// A review was added - append it to the list then reload the data.
+                                // A tea was created - append it to the list.
 					self.list.append(TeaListElement(ID: tea.id, name: tea.name, type: TeaType.tea, tags: []))
 				} // else, something went wrong and you should check `graphQLResult.error` for problems
 			case .failure(let error):
@@ -97,7 +97,7 @@ class ListManager: ObservableObject {
 			switch result {
 			case .success(let graphQLResult):
 				if let tea = graphQLResult.data?.onUpdateTea {
-					// A review was added - append it to the list then reload the data.
+                                // A tea was updated - refresh it in the list.
 					if let row = self.list.firstIndex(where: { $0.ID == tea.id }) {
 						self.list[row] = TeaListElement(ID: tea.id, name: tea.name, type: TeaType.tea, tags: [])
 					}
@@ -117,7 +117,7 @@ class ListManager: ObservableObject {
 			switch result {
 			case .success(let graphQLResult):
 				if let tea = graphQLResult.data?.onDeleteTea {
-					// A review was added - append it to the list then reload the data.
+                                // A tea was deleted - remove it from the list.
 					if let row = self.list.firstIndex(where: { $0.ID == tea.id }) {
 						self.list.remove(at: row)
 					}

@@ -1,5 +1,5 @@
 //
-//  DetailView.swift
+//  DetailManager.swift
 //  TeaElephantEditor
 //
 //  Created by Andrew Khasanov on 16.01.2021.

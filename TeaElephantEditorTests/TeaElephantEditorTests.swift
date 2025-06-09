@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import SwiftUI
 @testable import TeaElephantEditor
 
 class TeaElephantEditorTests: XCTestCase {
@@ -28,6 +29,12 @@ class TeaElephantEditorTests: XCTestCase {
         self.measure {
             // Put the code you want to measure the time of here.
         }
+    }
+
+    func testColorHexRoundTrip() throws {
+        let expected = "#FF336699"
+        let color = Color(hex: expected)
+        XCTAssertEqual(color.hex(), expected)
     }
 
 }

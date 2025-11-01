@@ -22,15 +22,13 @@ class AdminAuth {
     private static let keychainService = "TeaElephantEditor"
     private static let keychainAccount = "admin"
 
-    // Load private key from Keychain as SecKey, then convert to CryptoKit key
+    // Load private key from Keychain (stored as generic password with x963 data)
     static func loadPrivateKeyFromKeychain() throws -> P256.Signing.PrivateKey {
-        // Query for the private key by label
+        // Query for the key data stored as generic password
         let query: [String: Any] = [
-            kSecClass as String: kSecClassKey,
-            kSecAttrKeyClass as String: kSecAttrKeyClassPrivate,
-            kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
+            kSecClass as String: kSecClassGenericPassword,
             kSecAttrLabel as String: keychainLabel,
-            kSecReturnRef as String: true
+            kSecReturnData as String: true
         ]
 
         var item: CFTypeRef?
@@ -40,18 +38,11 @@ class AdminAuth {
             throw AdminAuthError.keychainLookupFailed(status)
         }
 
-        guard let secKey = (item as! SecKey?) else {
-            throw AdminAuthError.keychainLookupFailed(errSecItemNotFound)
+        guard let keyData = item as? Data else {
+            throw AdminAuthError.invalidKeyData
         }
 
-        // Export the key data from SecKey
-        var error: Unmanaged<CFError>?
-        guard let keyData = SecKeyCopyExternalRepresentation(secKey, &error) as Data? else {
-            throw AdminAuthError.keyExportFailed
-        }
-
-        // CryptoKit expects x963 representation for P256
-        // SecKey exports in x963 format for EC keys, so we can use it directly
+        // Load the x963 representation into CryptoKit
         guard let privateKey = try? P256.Signing.PrivateKey(x963Representation: keyData) else {
             throw AdminAuthError.invalidKeyData
         }
@@ -116,11 +107,11 @@ class AdminAuth {
             return nil
         }
 
-        // Create JWT header with key ID for rotation support
+        // Create JWT header
+        // Note: kid (key ID) is optional - omit for default key
         let header: [String: Any] = [
             "alg": "ES256",
-            "typ": "JWT",
-            "kid": "admin-key-v1"  // Key ID for rotation
+            "typ": "JWT"
         ]
 
         let now = Date()
@@ -155,6 +146,7 @@ class AdminAuth {
         guard let signature = try? privateKey.signature(for: SHA256.hash(data: messageData)) else {
             return nil
         }
+        // Use rawRepresentation (IEEE P1363 format: R||S) for JWT ES256 compatibility
         let signatureB64 = signature.rawRepresentation.base64URLEncodedString()
 
         return "\(message).\(signatureB64)"

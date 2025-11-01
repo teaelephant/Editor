@@ -17,14 +17,21 @@ class Network {
     /// A web socket transport to use for subscriptions
     private lazy var webSocketTransport: WebSocketTransport = {
         let url = URL(string: "wss://tea-elephant.com/v2/query")!
-        let webSocketClient = WebSocket(url: url, protocol: .graphql_transport_ws)
+        var request = URLRequest(url: url)
+
+        // Add admin JWT to WebSocket connection
+        if let jwt = AdminAuth.generateAdminJWT() {
+            request.addValue("Bearer \(jwt)", forHTTPHeaderField: "Authorization")
+        }
+
+        let webSocketClient = WebSocket(request: request, protocol: .graphql_transport_ws)
         return WebSocketTransport(websocket: webSocketClient)
     }()
 
     /// An HTTP transport to use for queries and mutations
     private lazy var normalTransport: RequestChainNetworkTransport = {
         let url = URL(string: "https://tea-elephant.com/v2/query")!
-        return RequestChainNetworkTransport(interceptorProvider: DefaultInterceptorProvider(store: store), endpointURL: url)
+        return RequestChainNetworkTransport(interceptorProvider: AuthInterceptorProvider(store: store), endpointURL: url)
     }()
 
     /// A split network transport to allow the use of both of the above

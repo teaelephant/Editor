@@ -3,13 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1CEAF05DA35B1E8023EC88F2 /* Editor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEAF4367B2FD7FB955829EB /* Editor.swift */; };
 		1CEAF195C5137EDCC9D07FF6 /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAFF2E749726AC88A77755 /* apollo-codegen-config.json */; };
-		1CEAF1D43A472B2B0BADE115 /* onCreate.graphql in Sources */ = {isa = PBXBuildFile; fileRef = 1CEAF84F8015B3D5BC3595E2 /* onCreate.graphql */; };
 		1CEAF207EAFA0C5E00C8299D /* tagsMetadata.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAFF280FA6BA75340E2F2D /* tagsMetadata.graphql */; };
 		1CEAF40FE0F7D3F4C80A8FF1 /* schema.json in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAFB933912EE53156E8C2E /* schema.json */; };
 		1CEAF52B124EA49599AFA8CC /* createTagCategory.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAFC17B685D6C157CAD341 /* createTagCategory.graphql */; };
@@ -50,7 +49,14 @@
 		4BECF5FD26DB9B6E00027292 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0BA94125B25AE800F98920 /* Apollo */; };
 		4BECF5FF26DB9B6E00027292 /* Regex in Frameworks */ = {isa = PBXBuildFile; productRef = 4B39B2B6262CB12E0061788B /* Regex */; };
 		4BEED9AC2A8E06BC008BB9F8 /* descGen.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 4BEED9AB2A8E06BC008BB9F8 /* descGen.graphql */; };
-/* End PBXBuildFile section */
+		CE874D562EAEBCF400C36BFF /* updateTagCategory.graphql in Resources */ = {isa = PBXBuildFile; fileRef = CE874D552EAEBCF400C36BFF /* updateTagCategory.graphql */; };
+		CE874D572EAEBCF400C36BFF /* deleteTag.graphql in Resources */ = {isa = PBXBuildFile; fileRef = CE874D522EAEBCF400C36BFF /* deleteTag.graphql */; };
+		CE874D582EAEBCF400C36BFF /* deleteTagCategory.graphql in Resources */ = {isa = PBXBuildFile; fileRef = CE874D532EAEBCF400C36BFF /* deleteTagCategory.graphql */; };
+		CE874D592EAEBCF400C36BFF /* updateTag.graphql in Resources */ = {isa = PBXBuildFile; fileRef = CE874D542EAEBCF400C36BFF /* updateTag.graphql */; };
+		CE874D5A2EAEBFE400C36BFF /* onCreate.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAF84F8015B3D5BC3595E2 /* onCreate.graphql */; };
+		C8368D15E58B483EB6A9B423 /* AdminAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3C8EC97037444AA64A64FB /* AdminAuth.swift */; };
+		A9C15AE0E2E34840A8C834E9 /* AuthInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E998ED970C74123815C33E4 /* AuthInterceptor.swift */; };
+		/* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		4B804B0525ACFB1900BE1BD0 /* PBXContainerItemProxy */ = {
@@ -135,7 +141,13 @@
 		4B9E9B7525CF46A5006D8EB4 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		4BDE5B0525ACFF9E005BBBC5 /* TeaInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeaInfo.swift; sourceTree = "<group>"; };
 		4BEED9AB2A8E06BC008BB9F8 /* descGen.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = descGen.graphql; sourceTree = "<group>"; };
-/* End PBXFileReference section */
+		CE874D522EAEBCF400C36BFF /* deleteTag.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = deleteTag.graphql; sourceTree = "<group>"; };
+		CE874D532EAEBCF400C36BFF /* deleteTagCategory.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = deleteTagCategory.graphql; sourceTree = "<group>"; };
+		CE874D542EAEBCF400C36BFF /* updateTag.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = updateTag.graphql; sourceTree = "<group>"; };
+		CE874D552EAEBCF400C36BFF /* updateTagCategory.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = updateTagCategory.graphql; sourceTree = "<group>"; };
+		9D3C8EC97037444AA64A64FB /* AdminAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminAuth.swift; sourceTree = "<group>"; };
+		1E998ED970C74123815C33E4 /* AuthInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthInterceptor.swift; sourceTree = "<group>"; };
+		/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4B804AEF25ACFB1800BE1BD0 /* Frameworks */ = {
@@ -202,6 +214,10 @@
 		1CEAF3DF0ED94223F4355FAF /* mutations */ = {
 			isa = PBXGroup;
 			children = (
+				CE874D522EAEBCF400C36BFF /* deleteTag.graphql */,
+				CE874D532EAEBCF400C36BFF /* deleteTagCategory.graphql */,
+				CE874D542EAEBCF400C36BFF /* updateTag.graphql */,
+				CE874D552EAEBCF400C36BFF /* updateTagCategory.graphql */,
 				1CEAF721A5E0C23B336FB6CA /* create.graphql */,
 				1CEAF84E946AF348276E8E07 /* update.graphql */,
 				1CEAFC8AD7CE081FDD10C5ED /* delete.graphql */,
@@ -316,6 +332,8 @@
 				4B804AFB25ACFB1900BE1BD0 /* Preview Content */,
 				1CEAF1143C40331337DA312E /* Managers */,
 				4B0B028125B26515006C32AE /* Network.swift */,
+				9D3C8EC97037444AA64A64FB /* AdminAuth.swift */,
+				1E998ED970C74123815C33E4 /* AuthInterceptor.swift */,
 				1CEAFA6A593ED4DC201BED35 /* api */,
 				1CEAFFCAE4A08E4B57B50AEE /* Controllers */,
 				1CEAF5AE0DD32CAD06FB4D53 /* TagsEditor */,
@@ -431,7 +449,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1230;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					4B804AF125ACFB1800BE1BD0 = {
 						CreatedOnToolsVersion = 12.3;
@@ -475,6 +493,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE874D5A2EAEBFE400C36BFF /* onCreate.graphql in Resources */,
+				CE874D562EAEBCF400C36BFF /* updateTagCategory.graphql in Resources */,
+				CE874D572EAEBCF400C36BFF /* deleteTag.graphql in Resources */,
+				CE874D582EAEBCF400C36BFF /* deleteTagCategory.graphql in Resources */,
+				CE874D592EAEBCF400C36BFF /* updateTag.graphql in Resources */,
 				4B804AFD25ACFB1900BE1BD0 /* Preview Assets.xcassets in Resources */,
 				4B804AFA25ACFB1900BE1BD0 /* Assets.xcassets in Resources */,
 				4BEED9AC2A8E06BC008BB9F8 /* descGen.graphql in Resources */,
@@ -523,9 +546,10 @@
 				4B9E9B6E25CF4105006D8EB4 /* TagSelector.swift in Sources */,
 				4B804AF625ACFB1800BE1BD0 /* TeaElephantEditorApp.swift in Sources */,
 				4B0B028225B26515006C32AE /* Network.swift in Sources */,
+				C8368D15E58B483EB6A9B423 /* AdminAuth.swift in Sources */,
+				A9C15AE0E2E34840A8C834E9 /* AuthInterceptor.swift in Sources */,
 				1CEAFFF1DF69A53C9ED43C93 /* List.swift in Sources */,
 				4B9E9B7625CF46A5006D8EB4 /* Tag.swift in Sources */,
-				1CEAF1D43A472B2B0BADE115 /* onCreate.graphql in Sources */,
 				1CEAF59A9C7A545A85685B0B /* Detail.swift in Sources */,
 				1CEAF5E21409D7EDF4EE1DAC /* DetailManager.swift in Sources */,
 				1CEAF65E00D840ED32A9F3DB /* TagsView.swift in Sources */,
@@ -575,6 +599,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -607,8 +632,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = R859U8DTY9;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -628,6 +655,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -637,6 +665,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -669,8 +698,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = R859U8DTY9;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -683,6 +714,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
@@ -693,21 +725,26 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = TeaElephantEditor/TeaElephantEditor.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaElephantEditor/Preview Content\"";
-				DEVELOPMENT_TEAM = R859U8DTY9;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
 				INFOPLIST_FILE = TeaElephantEditor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = xax.TeaElephantEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -720,21 +757,26 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = TeaElephantEditor/TeaElephantEditor.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaElephantEditor/Preview Content\"";
-				DEVELOPMENT_TEAM = R859U8DTY9;
+				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
 				INFOPLIST_FILE = TeaElephantEditor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = xax.TeaElephantEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -745,12 +787,10 @@
 		4B804B1C25ACFB1900BE1BD0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = R859U8DTY9;
 				INFOPLIST_FILE = TeaElephantEditorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -768,12 +808,10 @@
 		4B804B1D25ACFB1900BE1BD0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = R859U8DTY9;
 				INFOPLIST_FILE = TeaElephantEditorTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -791,11 +829,9 @@
 		4B804B1F25ACFB1900BE1BD0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = R859U8DTY9;
 				INFOPLIST_FILE = TeaElephantEditorUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -812,11 +848,9 @@
 		4B804B2025ACFB1900BE1BD0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = R859U8DTY9;
 				INFOPLIST_FILE = TeaElephantEditorUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -877,7 +911,7 @@
 			repositoryURL = "https://github.com/apollographql/apollo-ios.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.0;
+				minimumVersion = 1.15.3;
 			};
 		};
 		4B39B2B5262CB12E0061788B /* XCRemoteSwiftPackageReference "Regex" */ = {

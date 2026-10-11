@@ -91,13 +91,13 @@ struct Detail: View {
                         }
                     } label:{
                         if saved {
-                            Image(systemName: "checkmark").foregroundColor(.green).onAppear{
-                                Task{
+                            Image(systemName: "checkmark").foregroundColor(.green).task {
+                                do {
                                     try await Task.sleep(nanoseconds: 500_000_000)
-                                    DispatchQueue.main.async {
-                                        self.saved = false
-                                    }
+                                } catch {
+                                    return
                                 }
+                                self.saved = false
                             }
                         } else {
                             Text("Save")

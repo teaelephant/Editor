@@ -23,10 +23,12 @@ Build and run the unit suite through the dedicated shared test scheme:
 
 ```sh
 xcodebuild -workspace TeaElephantEditor.xcworkspace -scheme TeaElephantEditorTests \
-  -destination 'platform=macOS' test
+  -destination "platform=macOS,arch=$(uname -m)" test
 ```
 
 UI tests use the existing separate target and are not included in this unit-test scheme.
+
+The project sets `LM_SKIP_METADATA_EXTRACTION=YES` because neither the app nor its test targets define App Intents. This skips the unused metadata extraction step. Re-enable it when adding App Intents or App Shortcuts.
 
 The shared `TeaElephantEditor` application scheme supports reproducible builds
 without personal Xcode settings. Build and launch locally with:

@@ -19,7 +19,7 @@ BUILD_ARGS=(
     -workspace "$ROOT_DIR/TeaElephantEditor.xcworkspace"
     -scheme "$APP_NAME"
     -configuration "$CONFIGURATION"
-    -destination 'platform=macOS'
+    -destination "platform=macOS,arch=$(uname -m)"
     -derivedDataPath "$DERIVED_DATA"
 )
 

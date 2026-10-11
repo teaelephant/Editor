@@ -20,13 +20,9 @@ extension TagsEditor {
 									}
 									print("set category of tag \(category)")
 									manager.setCategory(category)
-								})).alert(item: $error) { err in
-									Alert(title: Text("Category set error"), message: Text(err), dismissButton: .cancel())
-								}
+								})).errorAlert("Category set error", error: $error)
 				View(manager: manager)
-			}.alert(item: $manager.error) { err in
-				Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
-			}
+			}.errorAlert("load data error", error: $manager.error)
 		}
 	}
 }

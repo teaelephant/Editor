@@ -11,6 +11,7 @@ import SwiftUI
 import TeaElephantSchema
 
 @available(macOS 12.0.0, *)
+@MainActor
 class DetailManager: ObservableObject {
 	var id: String
 	@Published var detail: TeaDataWithID?
@@ -22,7 +23,6 @@ class DetailManager: ObservableObject {
         self.saved = false
 	}
 
-	@MainActor
 	func loadData(forceReload: Bool = false) async {
 		let fetchBehavior: FetchBehavior = forceReload ? .NetworkOnly : .CacheFirst
         do {
@@ -41,17 +41,15 @@ class DetailManager: ObservableObject {
                 guard let tea = data.tea else {
                     return
                 }
-                DispatchQueue.main.async {
-                    self.detail = TeaDataWithID(
-                        ID: tea.id,
-                        name: tea.name,
-                        type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
-                        description: tea.description,
-                        tags: tea.tags.map { tag in
-                            Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: tag.category.id, name: tag.category.name))
-                        }
-                    )
-                }
+                self.detail = TeaDataWithID(
+                    ID: tea.id,
+                    name: tea.name,
+                    type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
+                    description: tea.description,
+                    tags: tea.tags.map { tag in
+                        Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: tag.category.id, name: tag.category.name))
+                    }
+                )
             }
         } catch {
             self.error = error.localizedDescription
@@ -71,23 +69,19 @@ class DetailManager: ObservableObject {
 				print("updatedTea is nil")
 				return
 			}
-            DispatchQueue.main.async {
-                self.detail = TeaDataWithID(
-                    ID: self.id,
-                    name: updatedTea.name,
-                    type: TeaType(rawValue: updatedTea.type.rawValue)!,
-                    description: updatedTea.description,
-                    tags: []
-                )
-            }
+            self.detail = TeaDataWithID(
+                ID: self.id,
+                name: updatedTea.name,
+                type: TeaType(rawValue: updatedTea.type.rawValue)!,
+                description: updatedTea.description,
+                tags: []
+            )
 		case .failure(let error):
 			self.error = error.localizedDescription
 			print(error)
 		}
 		await loadData(forceReload: true)
-        DispatchQueue.main.async {
-            self.saved = true
-        }
+        self.saved = true
 	}
 
 	func create(_ data: TeaData) async throws {

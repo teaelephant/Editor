@@ -13,7 +13,7 @@ extension TagsEditor {
 		var body: some SwiftUI.View {
 			VStack {
 				HStack(alignment: .top) {
-					TextField("Имя", text: $manager.model.name).onChange(of: manager.model.name) { newValue in
+					TextField("Имя", text: $manager.model.name).onChange(of: manager.model.name) { _, newValue in
 						manager.model.name = newValue
 					}.validation(manager.model.nameValidation)
 					ColorPicker("", selection: $color)

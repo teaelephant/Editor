@@ -6,12 +6,6 @@ import Foundation
 import Apollo
 import TeaElephantSchema
 
-extension String: Identifiable {
-	public var id: String {
-		self
-	}
-}
-
 @available(macOS 12.0.0, *)
 @MainActor
 class ListManager: ObservableObject {
@@ -120,9 +114,9 @@ class ListManager: ObservableObject {
 
 			switch result {
 			case .success(let graphQLResult):
-				if let tea = graphQLResult.data?.onDeleteTea {
+				if let deletedTeaID = graphQLResult.data?.onDeleteTea {
                                 // A tea was deleted - remove it from the list.
-					if let row = self.list.firstIndex(where: { $0.ID == tea.id }) {
+					if let row = self.list.firstIndex(where: { $0.ID == deletedTeaID }) {
 						self.list.remove(at: row)
 					}
 				} // else, something went wrong and you should check `graphQLResult.error` for problems

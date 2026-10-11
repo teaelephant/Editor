@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D9CE4E01AC124284BF82D6B4 /* ErrorAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CE4E02AC124284BF82D6B4 /* ErrorAlert.swift */; };
 		1CEAF05DA35B1E8023EC88F2 /* Editor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CEAF4367B2FD7FB955829EB /* Editor.swift */; };
 		1CEAF195C5137EDCC9D07FF6 /* apollo-codegen-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAFF2E749726AC88A77755 /* apollo-codegen-config.json */; };
 		1CEAF207EAFA0C5E00C8299D /* tagsMetadata.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAFF280FA6BA75340E2F2D /* tagsMetadata.graphql */; };
@@ -89,6 +90,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D9CE4E02AC124284BF82D6B4 /* ErrorAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorAlert.swift; sourceTree = "<group>"; };
 		1CEAF18A00154B6C1C91CC4E /* createTag.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = createTag.graphql; sourceTree = "<group>"; };
 		1CEAF29192F820827122A19C /* View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		1CEAF32D017DA77BBE0ED183 /* onUpdate.graphql */ = {isa = PBXFileReference; lastKnownFileType = file.graphql; path = onUpdate.graphql; sourceTree = "<group>"; };
@@ -257,6 +259,7 @@
 		1CEAFD1A1716974F75F087FF /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				D9CE4E02AC124284BF82D6B4 /* ErrorAlert.swift */,
 				1CEAFF86024512F3896512F5 /* validation.swift */,
 			);
 			path = Helpers;
@@ -537,6 +540,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9CE4E01AC124284BF82D6B4 /* ErrorAlert.swift in Sources */,
 				4BDE5B0625ACFF9E005BBBC5 /* TeaInfo.swift in Sources */,
 				4B9E9B7225CF4661006D8EB4 /* TagsSelectManager.swift in Sources */,
 				4B4ABF9D25AE42AD002095E6 /* DetailView.swift in Sources */,
@@ -650,6 +654,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LM_SKIP_METADATA_EXTRACTION = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -711,6 +716,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LM_SKIP_METADATA_EXTRACTION = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -732,7 +738,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaElephantEditor/Preview Content\"";
 				ENABLE_APP_SANDBOX = YES;
@@ -765,7 +771,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaElephantEditor/Preview Content\"";
 				ENABLE_APP_SANDBOX = YES;

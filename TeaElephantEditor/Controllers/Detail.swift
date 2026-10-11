@@ -30,9 +30,7 @@ struct DetailController: View {
                 }
             } else {
                 Detail(update: manager.update, delete: manager.delete, tea: manager.detail!, id: manager.id, saved: $manager.saved)
-                    .alert(item: $manager.error) { err in
-                        Alert(title: Text("load data error"), message: Text(err), dismissButton: .cancel())
-                    }
+                    .errorAlert("load data error", error: $manager.error)
             }
         }
     }

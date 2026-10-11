@@ -13,7 +13,7 @@ extension TagsEditor {
 		var body: some SwiftUI.View {
 			VStack {
 				HStack(alignment: .top) {
-					TextField("Категория", text: $model.category).onChange(of: model.category) { newValue in
+					TextField("Категория", text: $model.category).onChange(of: model.category) {
 						manager.setName(model.category)
 					}.validation(model.categoryValidation)
 					Button {
@@ -41,9 +41,7 @@ extension TagsEditor {
 				}
 			}.onReceive(model.categoryValidation) { validation in
 				self.isSaveDisabled = !validation.isSuccess
-			}.alert(item: $manager.error) { err in
-				Alert(title: Text("Category error"), message: Text(err), dismissButton: .cancel())
-			}
+			}.errorAlert("Category error", error: $manager.error)
 		}
 	}
 

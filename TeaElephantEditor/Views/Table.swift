@@ -9,7 +9,7 @@ import SwiftUI
 
 @available(macOS 12.0.0, *)
 struct Table: View {
-	@ObservedObject private var manager = ListManager()
+	@StateObject private var manager = ListManager()
 	@State var newData: TeaDataWithID = TeaDataWithID(ID: "", name: "", type: TeaType.tea, description: "", tags: [])
 	var body: some View {
 		NavigationView {

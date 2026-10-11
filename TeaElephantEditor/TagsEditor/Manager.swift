@@ -1,7 +1,3 @@
-//
-// Created by Andrew Khasanov on 18.04.2021.
-//
-
 import Foundation
 import Apollo
 import SwiftUI
@@ -10,93 +6,106 @@ import TeaElephantSchema
 extension TagsEditor {
     @MainActor
     class Manager: ObservableObject {
+        private let client: ApolloClient
+        private var loadTask: Task<Void, Never>?
+        private var loadVersion = 0
         @Published var tags = [Tag]()
-        @Published var category: TagCategory?
+        @Published private(set) var category: TagCategory?
         @Published var model = Model()
         @Published var color: Color = .red
         @Published var error: String?
 
-        init() {
-            loadData()
+        init(client: ApolloClient? = nil) {
+            self.client = client ?? Network.shared.apollo
         }
 
+        deinit { loadTask?.cancel() }
+
         func loadData(forceReload: Bool = false) {
-            guard let cat = category else { return }
+            loadTask?.cancel()
+            loadVersion += 1
+            guard let category else { return }
+            let version = loadVersion
+            let query = TagsQuery(name: .some(model.name), category: .some(category.name))
             let fetchBehavior: FetchBehavior = forceReload ? .NetworkOnly : .CacheFirst
-            let query = TagsQuery(name: .some(model.name), category: .some(cat.name))
-            Task {
+            error = nil
+            loadTask = Task { [weak self, client] in
                 do {
-                    for try await response in Network.shared.apollo.fetchAsync(query: query, fetchBehavior: fetchBehavior) {
-                        guard let data = response.data else {
-                            error = response.errors?.first?.localizedDescription
-                            return
-                        }
-                        tags = data.tagsCategories.flatMap { category in
+                    for try await response in client.fetchAsync(query: query, fetchBehavior: fetchBehavior) {
+                        guard !Task.isCancelled, let self, self.loadVersion == version else { return }
+                        let data = try response.validatedData()
+                        self.tags = data.tagsCategories.flatMap { category in
                             category.tags.map { tag in
-                                Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: category.id, name: category.name))
+                                Tag(id: tag.id, name: tag.name, color: tag.color,
+                                    category: TagCategory(id: category.id, name: category.name))
                             }
                         }
                     }
                 } catch {
+                    guard !Task.isCancelled, let self, self.loadVersion == version else { return }
                     self.error = error.localizedDescription
                 }
             }
         }
 
-        func setColor(_ color: Color) {
-            self.color = color
-        }
+        func setColor(_ color: Color) { self.color = color }
 
         func createTag(_ name: String) {
-            guard let cat = category else {
-                error = "category is empty"
+            guard let category else {
+                error = "Выберите категорию."
                 return
             }
-            let mutation = CreateTagMutation(name: name, color: color.hex(), category: cat.id)
+            let mutation = CreateTagMutation(name: name, color: color.hex(), category: category.id)
             Task {
-                switch await Network.shared.apollo.performAsync(mutation: mutation) {
-                case .success(let response):
-                    if let error = response.errors?.first {
-                        self.error = error.localizedDescription
-                        return
-                    }
+                do {
+                    let response = try await client.performAsync(mutation: mutation).get()
+                    _ = try response.validatedData()
                     loadData(forceReload: true)
-                case .failure(let error):
-                    self.error = error.localizedDescription
-                }
+                } catch { self.error = error.localizedDescription }
             }
         }
 
-        func setCategory(_ cat: TagCategory) {
-            category = cat
-            model.category = cat.name
+        func setCategory(_ category: TagCategory?) {
+            self.category = category
+            model.category = category?.name ?? ""
+            tags = []
+            error = nil
             loadData()
         }
     }
 
     @MainActor
     class CategoryManager: ObservableObject {
+        private let client: ApolloClient
+        private var loadTask: Task<Void, Never>?
+        private var loadVersion = 0
         @Published var categories = [TagCategory]()
         @Published var name = ""
         @Published var error: String?
 
-        init() {
+        init(client: ApolloClient? = nil) {
+            self.client = client ?? Network.shared.apollo
             loadData()
         }
 
+        deinit { loadTask?.cancel() }
+
         func loadData(forceReload: Bool = false) {
-            let fetchBehavior: FetchBehavior = forceReload ? .CacheAndNetwork : .CacheFirst
+            loadTask?.cancel()
+            loadVersion += 1
+            let version = loadVersion
             let query = TagCategoriesQuery(name: name)
-            Task {
+            let fetchBehavior: FetchBehavior = forceReload ? .NetworkOnly : .CacheFirst
+            error = nil
+            loadTask = Task { [weak self, client] in
                 do {
-                    for try await response in Network.shared.apollo.fetchAsync(query: query, fetchBehavior: fetchBehavior) {
-                        guard let data = response.data else {
-                            error = response.errors?.first?.localizedDescription
-                            return
-                        }
-                        categories = data.tagsCategories.map { TagCategory(id: $0.id, name: $0.name) }
+                    for try await response in client.fetchAsync(query: query, fetchBehavior: fetchBehavior) {
+                        guard !Task.isCancelled, let self, self.loadVersion == version else { return }
+                        let data = try response.validatedData()
+                        self.categories = data.tagsCategories.map { TagCategory(id: $0.id, name: $0.name) }
                     }
                 } catch {
+                    guard !Task.isCancelled, let self, self.loadVersion == version else { return }
                     self.error = error.localizedDescription
                 }
             }
@@ -104,16 +113,11 @@ extension TagsEditor {
 
         func createCategory(_ name: String) {
             Task {
-                switch await Network.shared.apollo.performAsync(mutation: CreateTagCategoryMutation(name: name)) {
-                case .success(let response):
-                    if let error = response.errors?.first {
-                        self.error = error.localizedDescription
-                        return
-                    }
+                do {
+                    let response = try await client.performAsync(mutation: CreateTagCategoryMutation(name: name)).get()
+                    _ = try response.validatedData()
                     setName(name)
-                case .failure(let error):
-                    self.error = error.localizedDescription
-                }
+                } catch { self.error = error.localizedDescription }
             }
         }
 

@@ -1,3 +1,4 @@
+import Foundation
 import Apollo
 import ApolloAPI
 
@@ -51,5 +52,22 @@ extension ApolloClient {
                 }
             }
         }
+    }
+}
+
+struct EditorRequestError: LocalizedError {
+    let message: String
+    var errorDescription: String? { message }
+}
+
+extension GraphQLResponse {
+    func validatedData() throws -> Operation.Data {
+        if let error = errors?.first {
+            throw error
+        }
+        guard let data else {
+            throw EditorRequestError(message: "Сервер вернул пустой ответ.")
+        }
+        return data
     }
 }

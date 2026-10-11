@@ -3,6 +3,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 @available(macOS 12.0, *)
 struct TagsView: View {
@@ -49,14 +50,14 @@ extension Color {
 		)
 	}
 
-	func hex() -> String {
-		guard let components = cgColor?.components else {
-			return "#FFFFFFFF"
-		}
-		let rgba: Int = (Int)(round(components[3] * 255)) << 24 |
-						(Int)(round(components[0] * 255)) << 16 |
-						(Int)(round(components[1] * 255)) << 8 |
-						(Int)(round(components[2] * 255)) << 0
-		return String(format: "#%06X", rgba)
-	}
+    func hex() -> String {
+        guard let color = NSColor(self).usingColorSpace(.sRGB) else {
+            return "#FFFFFFFF"
+        }
+        let components = [color.alphaComponent, color.redComponent, color.greenComponent, color.blueComponent]
+        let argb = components.reduce(UInt32(0)) { value, component in
+            (value << 8) | UInt32((min(1, max(0, component)) * 255).rounded())
+        }
+        return String(format: "#%08X", argb)
+    }
 }

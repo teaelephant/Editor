@@ -50,7 +50,7 @@ struct TagSelector: View {
 				}
 			}, label: {
 				Image(systemName: "plus.circle.fill").foregroundColor(.green)
-			}).disabled(selectedTag == nil)
+			}).disabled(selectedTag == nil || manager.isMutating)
         }.task {
             await manager.loadData()
         }.errorAlert("load data error", error: $manager.error)

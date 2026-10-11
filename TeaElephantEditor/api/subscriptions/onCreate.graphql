@@ -4,5 +4,9 @@ subscription onCreate{
         name
         type
         description
+        tags {
+            id
+            color
+        }
     }
 }

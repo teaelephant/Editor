@@ -4,5 +4,9 @@ subscription onUpdate{
         name
         type
         description
+        tags {
+            id
+            color
+        }
     }
 }

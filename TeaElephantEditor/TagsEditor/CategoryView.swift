@@ -6,9 +6,9 @@ import SwiftUI
 
 extension TagsEditor {
 	struct CategoryView: SwiftUI.View {
-		@ObservedObject var model = Model()
+		@StateObject var model = Model()
 		@Binding var selected: TagCategory?
-		@ObservedObject var manager = CategoryManager()
+		@StateObject var manager = CategoryManager()
 		@State var isSaveDisabled = true
 		var body: some SwiftUI.View {
 			VStack {

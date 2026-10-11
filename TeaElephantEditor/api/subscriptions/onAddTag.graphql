@@ -1,0 +1,9 @@
+subscription onAddTag {
+    onAddTagToTea {
+        id
+        tags {
+            id
+            color
+        }
+    }
+}

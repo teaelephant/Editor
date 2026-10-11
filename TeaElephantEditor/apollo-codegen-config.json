@@ -1,10 +1,12 @@
 {
   "input": {
     "operationSearchPaths": [
-      "**/*.graphql"
+      "./api/queries/*.graphql",
+      "./api/mutations/*.graphql",
+      "./api/subscriptions/*.graphql"
     ],
     "schemaSearchPaths": [
-      "**/schema.json"
+      "./api/schema.json"
     ]
   },
   "output": {

@@ -1,118 +1,152 @@
-//
-//  DetailManager.swift
-//  TeaElephantEditor
-//
-//  Created by Andrew Khasanov on 16.01.2021.
-//
-
 import Foundation
 import Apollo
-import SwiftUI
 import TeaElephantSchema
 
-@available(macOS 12.0.0, *)
 @MainActor
 class DetailManager: ObservableObject {
-	var id: String
-	@Published var detail: TeaDataWithID?
-	@Published var error: String?
+    private let client: ApolloClient
+    @Published private(set) var id: String
+    @Published private(set) var detail: TeaDataWithID?
+    @Published var error: String?
     @Published var saved = false
+    @Published private(set) var isLoading = false
+    @Published private(set) var loadFailed = false
+    @Published private(set) var isSaving = false
+    @Published private(set) var isDeleting = false
+    @Published private(set) var isGenerating = false
+    @Published private(set) var deleted = false
+    let tagsManager: TagsSelectManager
 
-	init(_ id: String) {
-		self.id = id
-        self.saved = false
-	}
+    init(_ id: String, client: ApolloClient? = nil) {
+        let client = client ?? Network.shared.apollo
+        self.client = client
+        self.id = id
+        tagsManager = TagsSelectManager(id, client: client)
+        tagsManager.onChange = { [weak self] in
+            await self?.loadData(forceReload: true)
+        }
+    }
 
-	func loadData(forceReload: Bool = false) async {
-		let fetchBehavior: FetchBehavior = forceReload ? .NetworkOnly : .CacheFirst
+    func loadData(forceReload: Bool = false) async {
+        guard !id.isEmpty, !deleted, !isLoading else { return }
+        isLoading = true
+        loadFailed = false
+        error = nil
+        defer { isLoading = false }
         do {
-            for try await result in Network.shared.apollo.fetchAsync(query: GetQuery(id: id), fetchBehavior: fetchBehavior) {
-                guard let data = result.data else {
-                    guard let errors = result.errors else {
-                        print("Failure! Unexpected error")
-                        return
-                    }
-                    if errors.count > 0 {
-                        error = errors[0].localizedDescription
-                    }
-                    print("Failure! Error: \(errors)")
-                    return
-                }
+            for try await response in client.fetchAsync(
+                query: GetQuery(id: id), fetchBehavior: forceReload ? .NetworkOnly : .CacheFirst
+            ) {
+                let data = try response.validatedData()
                 guard let tea = data.tea else {
-                    return
+                    detail = nil
+                    throw EditorRequestError(message: "Запись не найдена или была удалена.")
                 }
-                self.detail = TeaDataWithID(
-                    ID: tea.id,
-                    name: tea.name,
-                    type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
+                detail = TeaDataWithID(
+                    ID: tea.id, name: tea.name,
+                    type: TeaType(rawValue: tea.type.rawValue) ?? .other,
                     description: tea.description,
                     tags: tea.tags.map { tag in
-                        Tag(id: tag.id, name: tag.name, color: tag.color, category: TagCategory(id: tag.category.id, name: tag.category.name))
+                        Tag(id: tag.id, name: tag.name, color: tag.color,
+                            category: TagCategory(id: tag.category.id, name: tag.category.name))
                     }
                 )
             }
+            if detail == nil {
+                throw EditorRequestError(message: "Не удалось загрузить запись.")
+            }
+        } catch {
+            if !Task.isCancelled {
+                self.error = error.localizedDescription
+                loadFailed = true
+            }
+        }
+    }
+
+    func save(_ data: TeaData) async throws {
+        guard !isSaving, !isDeleting, !deleted else { return }
+        isSaving = true
+        saved = false
+        error = nil
+        defer { isSaving = false }
+        do {
+            if id.isEmpty {
+                let response = try await client.performAsync(mutation: CreateMutation(tea: data)).get()
+                let created = try response.validatedData().newTea
+                guard !created.id.isEmpty else {
+                    throw EditorRequestError(message: "Сервер не подтвердил создание записи.")
+                }
+                id = created.id
+                tagsManager.tea = created.id
+                detail = TeaDataWithID(
+                    ID: created.id, name: data.name,
+                    type: TeaType(rawValue: data.type.rawValue) ?? .other,
+                    description: data.description, tags: []
+                )
+            } else {
+                let response = try await client.performAsync(mutation: UpdateMutation(id: id, tea: data)).get()
+                let updated = try response.validatedData().updateTea
+                detail = TeaDataWithID(
+                    ID: id, name: updated.name,
+                    type: TeaType(rawValue: updated.type.rawValue) ?? .other,
+                    description: updated.description, tags: detail?.tags ?? []
+                )
+            }
+            await loadData(forceReload: true)
+            saved = true
         } catch {
             self.error = error.localizedDescription
-            print("Failure! Error: \(error)")
+            throw error
         }
-	}
+    }
 
-	func update(_ data: TeaData) async throws {
-		let result = await Network.shared.apollo.performAsync(mutation: UpdateMutation(id: id, tea: data))
-		switch result {
-		case .success(let graphQLResult):
-			if let errors = graphQLResult.errors {
-				print(errors)
-				return
-			}
-			guard let updatedTea = graphQLResult.data?.updateTea else {
-				print("updatedTea is nil")
-				return
-			}
-            self.detail = TeaDataWithID(
-                ID: self.id,
-                name: updatedTea.name,
-                type: TeaType(rawValue: updatedTea.type.rawValue)!,
-                description: updatedTea.description,
-                tags: []
-            )
-		case .failure(let error):
-			self.error = error.localizedDescription
-			print(error)
-		}
-		await loadData(forceReload: true)
-        self.saved = true
-	}
+    func create(_ data: TeaData) async throws {
+        try await save(data)
+    }
 
-	func create(_ data: TeaData) async throws {
-		let result = await Network.shared.apollo.performAsync(mutation: CreateMutation(tea: data))
-		switch result {
-		case .success(let graphQLResult):
-			if let errors = graphQLResult.errors {
-				print(errors)
-				return
-			}
-			guard let createdTea = graphQLResult.data?.newTea else {
-				return
-			}
-			detail = TeaDataWithID(
-							ID: createdTea.id,
-							name: data.name,
-							type: TeaType(rawValue: data.type.rawValue)!,
-							description: data.description,
-							tags: []
-			)
-		case .failure(let error):
-			self.error = error.localizedDescription
-			print(error)
-		}
-		await loadData(forceReload: true)
-        self.saved = true
-	}
+    func update(_ data: TeaData) async throws {
+        try await save(data)
+    }
 
-	func delete() async throws {
-		print("delete \(id)")
-		_ = await Network.shared.apollo.performAsync(mutation: DeleteMutation(id: id))
-		await loadData(forceReload: true)
-	}
+    func delete() async throws {
+        guard !id.isEmpty, !isDeleting, !isSaving, !deleted else { return }
+        isDeleting = true
+        saved = false
+        error = nil
+        defer { isDeleting = false }
+        do {
+            let response = try await client.performAsync(mutation: DeleteMutation(id: id)).get()
+            guard try response.validatedData().deleteTea == id else {
+                throw EditorRequestError(message: "Сервер не подтвердил удаление записи.")
+            }
+            detail = nil
+            deleted = true
+            tagsManager.tea = ""
+        } catch {
+            self.error = error.localizedDescription
+            throw error
+        }
+    }
+
+    func generateDescription(name: String) async -> String? {
+        guard !isGenerating else { return nil }
+        isGenerating = true
+        error = nil
+        defer { isGenerating = false }
+        do {
+            for try await response in client.fetchAsync(
+                query: DescGenQuery(name: name), fetchBehavior: .NetworkOnly
+            ) {
+                let description = try response.validatedData().generateDescription
+                guard !description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                    throw EditorRequestError(message: "Не удалось сгенерировать описание: сервер вернул пустой ответ.")
+                }
+                return description
+            }
+            throw EditorRequestError(message: "Не удалось сгенерировать описание.")
+        } catch {
+            if !Task.isCancelled { self.error = error.localizedDescription }
+            return nil
+        }
+    }
 }

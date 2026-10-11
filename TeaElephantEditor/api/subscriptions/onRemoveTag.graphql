@@ -1,0 +1,9 @@
+subscription onRemoveTag {
+    onDeleteTagFromTea {
+        id
+        tags {
+            id
+            color
+        }
+    }
+}

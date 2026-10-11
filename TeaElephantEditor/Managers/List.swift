@@ -1,129 +1,112 @@
-//
-// Created by Andrew Khasanov on 12.01.2021.
-//
-
 import Foundation
 import Apollo
 import TeaElephantSchema
 
-@available(macOS 12.0.0, *)
 @MainActor
 class ListManager: ObservableObject {
-	@Published var list: [TeaListElement]
-	@Published var error: String?
-	var onCreate: Task<Void, Never>?
-	var onUpdate: Task<Void, Never>?
-	var onDelete: Task<Void, Never>?
+    private let client: ApolloClient
+    @Published var list = [TeaListElement]()
+    @Published var error: String?
+    private var onCreate: Task<Void, Never>?
+    private var onUpdate: Task<Void, Never>?
+    private var onDelete: Task<Void, Never>?
+    private var onAddTag: Task<Void, Never>?
+    private var onRemoveTag: Task<Void, Never>?
 
-	init() {
-		print("running loadData")
-		list = [TeaListElement]()
-	}
+    init(client: ApolloClient? = nil) {
+        self.client = client ?? Network.shared.apollo
+    }
 
-	deinit {
-		if onCreate != nil {
-			onCreate?.cancel()
-		}
-		if onUpdate != nil {
-			onUpdate?.cancel()
-		}
-		if onDelete != nil {
-			onDelete?.cancel()
-		}
-	}
+    deinit {
+        onCreate?.cancel()
+        onUpdate?.cancel()
+        onDelete?.cancel()
+        onAddTag?.cancel()
+        onRemoveTag?.cancel()
+    }
 
-	@MainActor
-	func loadData(forceReload: Bool = false) async -> Void {
-		let fetchBehavior: FetchBehavior = forceReload ? .NetworkOnly : .CacheFirst
+    func loadData(forceReload: Bool = false) async {
+        error = nil
         do {
-            for try await result in Network.shared.apollo.fetchAsync(query: ListQuery(), fetchBehavior: fetchBehavior) {
-                guard let data = result.data else {
-                    guard let errors = result.errors else {
-                        print("Failure! Unexpected error")
-                        return
-                    }
-                    if errors.count > 0 {
-                        self.error = errors[0].localizedDescription
-                    }
-                    print("Failure! Error: \(errors)")
-                    return
-                }
-                self.list = data.teas.map { tea in
-                    TeaListElement(
-                                    ID: tea.id,
-                                    name: tea.name,
-                                    type: TeaType(rawValue: tea.type.rawValue) ?? TeaType.other,
-                                    tags: tea.tags.map { tag in
-                                        ListTag(id: tag.id, color: tag.color)
-                                    })
+            for try await response in client.fetchAsync(
+                query: ListQuery(), fetchBehavior: forceReload ? .NetworkOnly : .CacheFirst
+            ) {
+                let data = try response.validatedData()
+                list = data.teas.map { tea in
+                    TeaListElement(ID: tea.id, name: tea.name,
+                                   type: TeaType(rawValue: tea.type.rawValue) ?? .other,
+                                   tags: tea.tags.map { ListTag(id: $0.id, color: $0.color) })
                 }
                 subscribeOnChange()
             }
         } catch {
-            self.error = error.localizedDescription
-            print("Failure! Error: \(error)")
+            if !Task.isCancelled { self.error = error.localizedDescription }
         }
-	}
+    }
 
-	func subscribeOnChange() {
-		onCreate?.cancel()
-		onUpdate?.cancel()
-		onDelete?.cancel()
-		onCreate = Network.shared.apollo
-						.subscribeAsync(subscription: OnCreateSubscription()) { [weak self] result in
-			guard let self = self else {
-				return
-			}
+    private func upsert(_ tea: TeaListElement) {
+        if let row = list.firstIndex(where: { $0.ID == tea.ID }) {
+            list[row] = tea
+        } else {
+            list.append(tea)
+        }
+    }
 
-			switch result {
-			case .success(let graphQLResult):
-				if let tea = graphQLResult.data?.onCreateTea {
-                                // A tea was created - append it to the list.
-					self.list.append(TeaListElement(ID: tea.id, name: tea.name, type: TeaType.tea, tags: []))
-				} // else, something went wrong and you should check `graphQLResult.error` for problems
-			case .failure(let error):
-				// Not included here: Show some kind of alert
-				print(error)
-			}
-		}
-		onUpdate = Network.shared.apollo
-						.subscribeAsync(subscription: OnUpdateSubscription()) { [weak self] result in
-			guard let self = self else {
-				return
-			}
+    private func updateTags(for id: String, tags: [ListTag]) {
+        guard let row = list.firstIndex(where: { $0.ID == id }) else { return }
+        let tea = list[row]
+        list[row] = TeaListElement(ID: tea.ID, name: tea.name, type: tea.type, tags: tags)
+    }
 
-			switch result {
-			case .success(let graphQLResult):
-				if let tea = graphQLResult.data?.onUpdateTea {
-                                // A tea was updated - refresh it in the list.
-					if let row = self.list.firstIndex(where: { $0.ID == tea.id }) {
-						self.list[row] = TeaListElement(ID: tea.id, name: tea.name, type: TeaType.tea, tags: [])
-					}
-					// self.loadData(forceReload: true)
-				} // else, something went wrong and you should check `graphQLResult.error` for problems
-			case .failure(let error):
-				// Not included here: Show some kind of alert
-				print(error)
-			}
-		}
-		onDelete = Network.shared.apollo
-						.subscribeAsync(subscription: OnDeleteSubscription()) { [weak self] result in
-			guard let self = self else {
-				return
-			}
-
-			switch result {
-			case .success(let graphQLResult):
-				if let deletedTeaID = graphQLResult.data?.onDeleteTea {
-                                // A tea was deleted - remove it from the list.
-					if let row = self.list.firstIndex(where: { $0.ID == deletedTeaID }) {
-						self.list.remove(at: row)
-					}
-				} // else, something went wrong and you should check `graphQLResult.error` for problems
-			case .failure(let error):
-				// Not included here: Show some kind of alert
-				print(error)
-			}
-		}
-	}
+    func subscribeOnChange() {
+        onCreate?.cancel()
+        onUpdate?.cancel()
+        onDelete?.cancel()
+        onAddTag?.cancel()
+        onRemoveTag?.cancel()
+        onCreate = client.subscribeAsync(subscription: OnCreateSubscription()) { [weak self] result in
+            guard let self else { return }
+            do {
+                let tea = try result.get().validatedData().onCreateTea
+                self.upsert(TeaListElement(
+                    ID: tea.id, name: tea.name,
+                    type: TeaType(rawValue: tea.type.rawValue) ?? .other,
+                    tags: tea.tags.map { ListTag(id: $0.id, color: $0.color) }
+                ))
+            } catch { self.error = error.localizedDescription }
+        }
+        onUpdate = client.subscribeAsync(subscription: OnUpdateSubscription()) { [weak self] result in
+            guard let self else { return }
+            do {
+                let tea = try result.get().validatedData().onUpdateTea
+                guard let row = self.list.firstIndex(where: { $0.ID == tea.id }) else { return }
+                self.list[row] = TeaListElement(
+                    ID: tea.id, name: tea.name,
+                    type: TeaType(rawValue: tea.type.rawValue) ?? .other,
+                    tags: tea.tags.map { ListTag(id: $0.id, color: $0.color) }
+                )
+            } catch { self.error = error.localizedDescription }
+        }
+        onAddTag = client.subscribeAsync(subscription: OnAddTagSubscription()) { [weak self] result in
+            guard let self else { return }
+            do {
+                let tea = try result.get().validatedData().onAddTagToTea
+                self.updateTags(for: tea.id, tags: tea.tags.map { ListTag(id: $0.id, color: $0.color) })
+            } catch { self.error = error.localizedDescription }
+        }
+        onRemoveTag = client.subscribeAsync(subscription: OnRemoveTagSubscription()) { [weak self] result in
+            guard let self else { return }
+            do {
+                let tea = try result.get().validatedData().onDeleteTagFromTea
+                self.updateTags(for: tea.id, tags: tea.tags.map { ListTag(id: $0.id, color: $0.color) })
+            } catch { self.error = error.localizedDescription }
+        }
+        onDelete = client.subscribeAsync(subscription: OnDeleteSubscription()) { [weak self] result in
+            guard let self else { return }
+            do {
+                let id = try result.get().validatedData().onDeleteTea
+                self.list.removeAll { $0.ID == id }
+            } catch { self.error = error.localizedDescription }
+        }
+    }
 }

@@ -57,6 +57,8 @@
 		CE874D582EAEBCF400C36BFF /* deleteTagCategory.graphql in Resources */ = {isa = PBXBuildFile; fileRef = CE874D532EAEBCF400C36BFF /* deleteTagCategory.graphql */; };
 		CE874D592EAEBCF400C36BFF /* updateTag.graphql in Resources */ = {isa = PBXBuildFile; fileRef = CE874D542EAEBCF400C36BFF /* updateTag.graphql */; };
 		CE874D5A2EAEBFE400C36BFF /* onCreate.graphql in Resources */ = {isa = PBXBuildFile; fileRef = 1CEAF84F8015B3D5BC3595E2 /* onCreate.graphql */; };
+		F13E01000000000000000002 /* EditorRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13E01000000000000000001 /* EditorRegressionTests.swift */; };
+		F13E01000000000000000004 /* EditorTestTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13E01000000000000000003 /* EditorTestTransport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,6 +151,8 @@
 		CE874D532EAEBCF400C36BFF /* deleteTagCategory.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = deleteTagCategory.graphql; sourceTree = "<group>"; };
 		CE874D542EAEBCF400C36BFF /* updateTag.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = updateTag.graphql; sourceTree = "<group>"; };
 		CE874D552EAEBCF400C36BFF /* updateTagCategory.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = updateTagCategory.graphql; sourceTree = "<group>"; };
+		F13E01000000000000000001 /* EditorRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorRegressionTests.swift; sourceTree = "<group>"; };
+		F13E01000000000000000003 /* EditorTestTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTestTransport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -357,6 +361,8 @@
 		4B804B0725ACFB1900BE1BD0 /* TeaElephantEditorTests */ = {
 			isa = PBXGroup;
 			children = (
+				F13E01000000000000000001 /* EditorRegressionTests.swift */,
+				F13E01000000000000000003 /* EditorTestTransport.swift */,
 				4B804B0825ACFB1900BE1BD0 /* TeaElephantEditorTests.swift */,
 				4B804B0A25ACFB1900BE1BD0 /* Info.plist */,
 			);
@@ -571,6 +577,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F13E01000000000000000002 /* EditorRegressionTests.swift in Sources */,
+				F13E01000000000000000004 /* EditorTestTransport.swift in Sources */,
 				4B804B0925ACFB1900BE1BD0 /* TeaElephantEditorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -738,7 +746,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaElephantEditor/Preview Content\"";
 				ENABLE_APP_SANDBOX = YES;
@@ -752,7 +760,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.6;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = xax.TeaElephantEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -771,7 +779,7 @@
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"TeaElephantEditor/Preview Content\"";
 				ENABLE_APP_SANDBOX = YES;
@@ -785,7 +793,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.6;
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = xax.TeaElephantEditor;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -1,42 +1,40 @@
-//
-// Created by Andrew Khasanov on 16.01.2021.
-//
-
 import SwiftUI
 
-@available(macOS 12.0.0, *)
 struct DetailController: View {
-    var id: String
-    @ObservedObject var manager: DetailManager
-    
+    @StateObject private var manager: DetailManager
+    @Environment(\.dismiss) private var dismiss
+
     init(id: String) {
-        self.id = id
-        manager = DetailManager(id)
+        _manager = StateObject(wrappedValue: DetailManager(id))
     }
-    
+
     var body: some View {
-        Group{
-            if id == "" {
-                Detail(
-                    update: manager.create,
-                    delete: manager.delete,
-                    tea: nil,
-                    id: nil,
-                    saved: $manager.saved
-                )
-            } else if manager.detail == nil {
-                ProgressView().task{
-                    await manager.loadData()
+        Group {
+            if manager.deleted {
+                ContentUnavailableView("Запись удалена", systemImage: "trash")
+            } else if manager.id.isEmpty || manager.detail != nil {
+                Detail(manager: manager)
+            } else if manager.loadFailed {
+                VStack {
+                    ContentUnavailableView("Не удалось загрузить запись", systemImage: "exclamationmark.triangle")
+                    Button("Повторить") {
+                        Task { await manager.loadData(forceReload: true) }
+                    }
                 }
             } else {
-                Detail(update: manager.update, delete: manager.delete, tea: manager.detail!, id: manager.id, saved: $manager.saved)
-                    .errorAlert("load data error", error: $manager.error)
+                ProgressView()
             }
         }
+        .task {
+            if manager.detail == nil { await manager.loadData() }
+        }
+        .onChange(of: manager.deleted) {
+            if manager.deleted { dismiss() }
+        }
+        .errorAlert("Ошибка", error: $manager.error)
     }
 }
 
-@available(macOS 12.0.0, *)
 struct DetailController_Previews: PreviewProvider {
     static var previews: some View {
         DetailController(id: "")

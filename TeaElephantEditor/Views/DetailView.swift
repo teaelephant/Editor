@@ -1,144 +1,92 @@
-//
-//  DetailView.swift
-//  TeaElephantEditor
-//
-//  Created by Andrew Khasanov on 12.01.2021.
-//
-
 import SwiftUI
 import TeaElephantSchema
 
-@available(macOS 12.0.0, *)
 struct Detail: View {
-    var update: (TeaData) async throws -> Void
-    var delete: () async throws -> Void
-    var tagsManager: TagsSelectManager?
-    @State private var name = ""
-    @State private var type = TeaType.tea
-    @State private var description = ""
-    @State private var loading = false
-    private var tags = [Tag]()
-    @Binding var saved: Bool
-    
-    init(update: @escaping (TeaData) async throws -> Void, delete: @escaping () async throws -> Void, tea: TeaDataWithID?, id: String?, saved: Binding<Bool>) {
-        self.update = update
-        self.delete = delete
-        self._saved = saved
-        
-        if id != nil {
-            tagsManager = TagsSelectManager(id!)
-        }
-        
-        guard let t = tea else {
-            return
-        }
-        
-        _name = State(initialValue: t.name)
-        _type = State(initialValue: t.type)
-        _description = State(initialValue: t.description)
-        tags = t.tags
+    @ObservedObject var manager: DetailManager
+    @ObservedObject private var tagsManager: TagsSelectManager
+    @State private var name: String
+    @State private var type: TeaType
+    @State private var description: String
+
+    init(manager: DetailManager) {
+        self.manager = manager
+        self.tagsManager = manager.tagsManager
+        _name = State(initialValue: manager.detail?.name ?? "")
+        _type = State(initialValue: manager.detail?.type ?? .tea)
+        _description = State(initialValue: manager.detail?.description ?? "")
     }
-    
+
+    private var busy: Bool {
+        manager.isSaving || manager.isDeleting || manager.isGenerating || tagsManager.isMutating
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
                 TextField("Имя", text: $name)
-                Picker(selection: $type, label: Text("Тип напитка")) {
+                Picker("Тип напитка", selection: $type) {
                     Text(TeaType.tea.rawValue).tag(TeaType.tea)
                     Text(TeaType.coffee.rawValue).tag(TeaType.coffee)
                     Text(TeaType.herb.rawValue).tag(TeaType.herb)
+                    Text(TeaType.other.rawValue).tag(TeaType.other)
                 }
-                Spacer()
-                if loading {
-                    ProgressView()
-                } else {
-                    TextEditor(text: $description)
-                }
-                Button(action: {
-                    withAnimation{
-                        loading = true
-                        Task{
-                            guard let description = await tagsManager?.generateDescription(name:name) else { return }
-                            if description == "" {
-                                return
-                            }
-                            DispatchQueue.main.async {
-                                self.description = description
-                                loading = false
-                            }
+                TextEditor(text: $description)
+                    .frame(minHeight: 120)
+                    .overlay {
+                        if manager.isGenerating { ProgressView() }
+                    }
+                Button("Generate description") {
+                    Task {
+                        if let generated = await manager.generateDescription(name: name) {
+                            description = generated
                         }
                     }
-                }) {
-                    Text("Generate description")
-                }.animation(.default, value: loading)
-                if tagsManager != nil {
-                    if tags.count > 0 {
-                        TagsView(tags: tags, remove: tagsManager!.removeTag)
-                    }
-                    TagSelector(manager: tagsManager!)
+                }
+                .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                if !manager.id.isEmpty {
+                    TagsView(tags: manager.detail?.tags ?? [], remove: tagsManager.removeTag)
+                    TagSelector(manager: tagsManager)
                 }
                 HStack {
                     Spacer()
-                    Button("Delete", action: {
-                        Task.init{
-                            await remove()
+                    if !manager.id.isEmpty {
+                        Button("Delete", role: .destructive) {
+                            Task { try? await manager.delete() }
                         }
-                    }).padding(.horizontal).foregroundColor(.red).animation(.default, value: saved)
-                    Button{
-                        withAnimation { }
-                        Task{
-                            await save()
-                        }
-                    } label:{
-                        if saved {
-                            Image(systemName: "checkmark").foregroundColor(.green).task {
-                                do {
-                                    try await Task.sleep(nanoseconds: 500_000_000)
-                                } catch {
-                                    return
+                        .padding(.horizontal)
+                    }
+                    Button {
+                        Task { try? await save() }
+                    } label: {
+                        if manager.saved {
+                            Image(systemName: "checkmark").foregroundColor(.green)
+                                .task {
+                                    do { try await Task.sleep(nanoseconds: 500_000_000) }
+                                    catch { return }
+                                    manager.saved = false
                                 }
-                                self.saved = false
-                            }
                         } else {
                             Text("Save")
                         }
-                    }.padding(.horizontal).foregroundColor(.green).animation(.default, value: saved)
+                    }
+                    .padding(.horizontal)
+                    .foregroundColor(.green)
+                    .animation(.default, value: manager.saved)
                 }
-            }.padding()
+            }
+            .padding()
+            .disabled(busy)
         }
     }
-    
-    func remove() async {
-        do {
-            try await delete()
-        } catch {
-            print(error)
-            return
-        }
-    }
-    
-    func save() async {
-        do {
-            try await update(TeaData(name: name, type: GraphQLEnum(Type_Enum(rawValue: type.rawValue)!), description: description))
-        } catch {
-            print(error)
-            return
-        }
+
+    private func save() async throws {
+        let input = TeaData(name: name, type: GraphQLEnum(Type_Enum(rawValue: type.rawValue) ?? .other), description: description)
+        try await manager.save(input)
     }
 }
 
-struct Demo {
-    func remove() throws {
-    }
-    
-    func save(_ data: TeaData) throws {
-        print(data)
-    }
-}
-
-@available(macOS 12.0.0, *)
 struct Detail_Previews: PreviewProvider {
     static var previews: some View {
-        Detail(update: Demo().save, delete: Demo().remove, tea: TeaDataWithID(ID: "", name: "", type: TeaType.tea, description: "", tags: []), id: nil, saved: .constant(true))
+        Detail(manager: DetailManager(""))
     }
 }

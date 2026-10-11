@@ -1,5 +1,7 @@
 # TeaElephantEditor
 
+![TeaElephant Editor for macOS — drink catalogue, coloured tags, AI descriptions and live GraphQL](docs/images/teaelephant-editor-social-preview.jpg)
+
 TeaElephantEditor is the macOS administration app for TeaElephant's shared drink
 catalogue. Create and edit tea, coffee, herb and other drink entries, organise
 them with coloured tags, and ask the backend to generate a description. The

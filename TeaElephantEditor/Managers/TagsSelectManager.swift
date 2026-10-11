@@ -10,6 +10,7 @@ import Apollo
 import TeaElephantSchema
 
 @available(macOS 12.0.0, *)
+@MainActor
 class TagsSelectManager: ObservableObject {
 	@Published var categories = [TagCategory]()
 	@Published var tags = [Tag]()
@@ -22,9 +23,9 @@ class TagsSelectManager: ObservableObject {
 
 	@MainActor
 	func loadData(forceReload: Bool = false) async {
-		let cachePolicy: CachePolicy = forceReload ? .returnCacheDataAndFetch : .returnCacheDataElseFetch
+		let fetchBehavior: FetchBehavior = forceReload ? .CacheAndNetwork : .CacheFirst
         do {
-            for try await result in Network.shared.apollo.fetchAsync(query: TagsMetaQuery(), cachePolicy: cachePolicy) {
+            for try await result in Network.shared.apollo.fetchAsync(query: TagsMetaQuery(), fetchBehavior: fetchBehavior) {
                 guard let data = result.data else {
                     return
                 }

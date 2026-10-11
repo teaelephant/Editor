@@ -1,60 +1,55 @@
-//
-//  ApolloClientExtension.swift
-//  ApolloClientExtension
-//
-//  Created by Andrew Khasanov on 29.08.2021.
-//
-
-import Foundation
 import Apollo
-import TeaElephantSchema
+import ApolloAPI
 
-@available(macOS 12.0.0, *)
 extension ApolloClient {
-    public func fetchAsync<Query: GraphQLQuery>(query: Query,
-                                                cachePolicy: CachePolicy = .default,
-                                                contextIdentifier: UUID? = nil,
-                                                queue: DispatchQueue = .main) -> AsyncThrowingStream<GraphQLResult<Query.Data>, Error> {
+    public func fetchAsync<Query: GraphQLQuery>(
+        query: Query,
+        fetchBehavior: FetchBehavior = .CacheFirst
+    ) -> AsyncThrowingStream<GraphQLResponse<Query>, any Swift.Error> {
         AsyncThrowingStream { continuation in
-                    let request = fetch(
-                        query: query,
-                        cachePolicy: cachePolicy,
-                        contextIdentifier: contextIdentifier,
-                        queue: queue
-                    ) { response in
-                        switch response {
-                        case .success(let result):
-                            continuation.yield(result)
-                            if result.isFinalForCachePolicy(cachePolicy) {
-                                continuation.finish()
-                            }
-                        case .failure(let error):
-                            continuation.finish(throwing: error)
-                        }
+            let task = Task {
+                do {
+                    for try await response in try fetch(query: query, fetchBehavior: fetchBehavior) {
+                        continuation.yield(response)
                     }
-                    continuation.onTermination = { @Sendable _ in
-                        request.cancel()
-                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
                 }
-    }
-    
-    public func performAsync<Mutation: GraphQLMutation>(mutation: Mutation, publishResultToStore: Bool = true, queue: DispatchQueue = .main) async -> Result<GraphQLResult<Mutation.Data>, Error> {
-        await withCheckedContinuation{ continuation in
-            self.perform(mutation: mutation, publishResultToStore: publishResultToStore, queue: queue) { result in
-                continuation.resume(returning: result)
             }
+            continuation.onTermination = { @Sendable _ in task.cancel() }
         }
     }
-    
-}
 
-fileprivate extension GraphQLResult {
-    func isFinalForCachePolicy(_ cachePolicy: CachePolicy) -> Bool {
-        switch cachePolicy {
-        case .returnCacheDataAndFetch:
-            return source == .server
-        default:
-            return true
+    public func performAsync<Mutation: GraphQLMutation>(
+        mutation: Mutation,
+        publishResultToStore: Bool = true
+    ) async -> Result<GraphQLResponse<Mutation>, any Swift.Error>
+    where Mutation.ResponseFormat == SingleResponseFormat {
+        do {
+            return .success(try await perform(
+                mutation: mutation,
+                requestConfiguration: RequestConfiguration(writeResultsToCache: publishResultToStore)
+            ))
+        } catch {
+            return .failure(error)
+        }
+    }
+
+    public func subscribeAsync<Subscription: GraphQLSubscription>(
+        subscription: Subscription,
+        onResponse: @escaping @MainActor @Sendable (Result<GraphQLResponse<Subscription>, any Swift.Error>) -> Void
+    ) -> Task<Void, Never> {
+        Task {
+            do {
+                for try await response in try subscribe(subscription: subscription, cachePolicy: .networkOnly) {
+                    await onResponse(.success(response))
+                }
+            } catch {
+                if !Task.isCancelled {
+                    await onResponse(.failure(error))
+                }
+            }
         }
     }
 }

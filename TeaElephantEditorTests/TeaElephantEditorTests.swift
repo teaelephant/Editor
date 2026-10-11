@@ -7,9 +7,34 @@
 
 import XCTest
 import SwiftUI
+import Apollo
 @testable import TeaElephantEditor
 
 class TeaElephantEditorTests: XCTestCase {
+
+    func testAdminAuthorizationInterceptorAddsBearerToken() async throws {
+        let interceptor = AuthInterceptor(tokenProvider: { "synthetic-admin-token" })
+        let request = URLRequest(url: URL(string: "https://example.invalid/graphql")!)
+        do {
+            _ = try await interceptor.intercept(request: request) { request in
+                XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer synthetic-admin-token")
+                throw InterceptorProbe.requestCaptured
+            }
+            XCTFail("Expected the test transport to stop the request")
+        } catch InterceptorProbe.requestCaptured {}
+    }
+
+    func testAdminAuthorizationInterceptorLeavesAnonymousRequestsWithoutToken() async throws {
+        let interceptor = AuthInterceptor(tokenProvider: { nil })
+        let request = URLRequest(url: URL(string: "https://example.invalid/graphql")!)
+        do {
+            _ = try await interceptor.intercept(request: request) { request in
+                XCTAssertNil(request.value(forHTTPHeaderField: "Authorization"))
+                throw InterceptorProbe.requestCaptured
+            }
+            XCTFail("Expected the test transport to stop the request")
+        } catch InterceptorProbe.requestCaptured {}
+    }
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -37,4 +62,8 @@ class TeaElephantEditorTests: XCTestCase {
         XCTAssertEqual(color.hex(), expected)
     }
 
+}
+
+private enum InterceptorProbe: Error {
+    case requestCaptured
 }

@@ -13,12 +13,13 @@ extension String: Identifiable {
 }
 
 @available(macOS 12.0.0, *)
+@MainActor
 class ListManager: ObservableObject {
 	@Published var list: [TeaListElement]
 	@Published var error: String?
-	var onCreate: Cancellable?
-	var onUpdate: Cancellable?
-	var onDelete: Cancellable?
+	var onCreate: Task<Void, Never>?
+	var onUpdate: Task<Void, Never>?
+	var onDelete: Task<Void, Never>?
 
 	init() {
 		print("running loadData")
@@ -39,9 +40,9 @@ class ListManager: ObservableObject {
 
 	@MainActor
 	func loadData(forceReload: Bool = false) async -> Void {
-		let cachePolicy: CachePolicy = forceReload ? .fetchIgnoringCacheData : .returnCacheDataElseFetch
+		let fetchBehavior: FetchBehavior = forceReload ? .NetworkOnly : .CacheFirst
         do {
-            for try await result in Network.shared.apollo.fetchAsync(query: ListQuery(), cachePolicy: cachePolicy) {
+            for try await result in Network.shared.apollo.fetchAsync(query: ListQuery(), fetchBehavior: fetchBehavior) {
                 guard let data = result.data else {
                     guard let errors = result.errors else {
                         print("Failure! Unexpected error")
@@ -71,8 +72,11 @@ class ListManager: ObservableObject {
 	}
 
 	func subscribeOnChange() {
+		onCreate?.cancel()
+		onUpdate?.cancel()
+		onDelete?.cancel()
 		onCreate = Network.shared.apollo
-						.subscribe(subscription: OnCreateSubscription()) { [weak self] result in
+						.subscribeAsync(subscription: OnCreateSubscription()) { [weak self] result in
 			guard let self = self else {
 				return
 			}
@@ -89,7 +93,7 @@ class ListManager: ObservableObject {
 			}
 		}
 		onUpdate = Network.shared.apollo
-						.subscribe(subscription: OnUpdateSubscription()) { [weak self] result in
+						.subscribeAsync(subscription: OnUpdateSubscription()) { [weak self] result in
 			guard let self = self else {
 				return
 			}
@@ -109,7 +113,7 @@ class ListManager: ObservableObject {
 			}
 		}
 		onDelete = Network.shared.apollo
-						.subscribe(subscription: OnDeleteSubscription()) { [weak self] result in
+						.subscribeAsync(subscription: OnDeleteSubscription()) { [weak self] result in
 			guard let self = self else {
 				return
 			}

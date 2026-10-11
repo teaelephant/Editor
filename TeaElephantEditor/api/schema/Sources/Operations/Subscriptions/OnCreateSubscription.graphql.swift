@@ -2,8 +2,9 @@
 // This file was automatically generated and should not be edited.
 
 @_exported import ApolloAPI
+@_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-public class OnCreateSubscription: GraphQLSubscription {
+nonisolated public struct OnCreateSubscription: GraphQLSubscription {
   public static let operationName: String = "onCreate"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
@@ -12,13 +13,16 @@ public class OnCreateSubscription: GraphQLSubscription {
 
   public init() {}
 
-  public struct Data: TeaElephantSchema.SelectionSet {
-    public let __data: DataDict
-    public init(_dataDict: DataDict) { __data = _dataDict }
+  nonisolated public struct Data: TeaElephantSchema.SelectionSet {
+    @_spi(Unsafe) public let __data: DataDict
+    @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-    public static var __parentType: ApolloAPI.ParentType { TeaElephantSchema.Objects.Subscription }
-    public static var __selections: [ApolloAPI.Selection] { [
+    @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { TeaElephantSchema.Objects.Subscription }
+    @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
       .field("onCreateTea", OnCreateTea.self),
+    ] }
+    @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+      OnCreateSubscription.Data.self
     ] }
 
     public var onCreateTea: OnCreateTea { __data["onCreateTea"] }
@@ -26,17 +30,20 @@ public class OnCreateSubscription: GraphQLSubscription {
     /// OnCreateTea
     ///
     /// Parent Type: `Tea`
-    public struct OnCreateTea: TeaElephantSchema.SelectionSet {
-      public let __data: DataDict
-      public init(_dataDict: DataDict) { __data = _dataDict }
+    nonisolated public struct OnCreateTea: TeaElephantSchema.SelectionSet {
+      @_spi(Unsafe) public let __data: DataDict
+      @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-      public static var __parentType: ApolloAPI.ParentType { TeaElephantSchema.Objects.Tea }
-      public static var __selections: [ApolloAPI.Selection] { [
+      @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { TeaElephantSchema.Objects.Tea }
+      @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
         .field("id", TeaElephantSchema.ID.self),
         .field("name", String.self),
         .field("type", GraphQLEnum<TeaElephantSchema.Type_Enum>.self),
         .field("description", String.self),
+      ] }
+      @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+        OnCreateSubscription.Data.OnCreateTea.self
       ] }
 
       public var id: TeaElephantSchema.ID { __data["id"] }

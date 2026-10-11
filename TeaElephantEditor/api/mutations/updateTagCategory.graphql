@@ -1,0 +1,6 @@
+mutation updateTagCategory($id: ID!, $name: String!){
+    updateTagCategory(id: $id, name: $name){
+        id
+        name
+    }
+}

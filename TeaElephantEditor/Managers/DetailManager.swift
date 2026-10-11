@@ -24,9 +24,9 @@ class DetailManager: ObservableObject {
 
 	@MainActor
 	func loadData(forceReload: Bool = false) async {
-		let cachePolicy: CachePolicy = forceReload ? .fetchIgnoringCacheData : .returnCacheDataElseFetch
+		let fetchBehavior: FetchBehavior = forceReload ? .NetworkOnly : .CacheFirst
         do {
-            for try await result in Network.shared.apollo.fetchAsync(query: GetQuery(id: id), cachePolicy: cachePolicy) {
+            for try await result in Network.shared.apollo.fetchAsync(query: GetQuery(id: id), fetchBehavior: fetchBehavior) {
                 guard let data = result.data else {
                     guard let errors = result.errors else {
                         print("Failure! Unexpected error")

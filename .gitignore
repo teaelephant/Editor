@@ -1,0 +1,3 @@
+# Local Swift Package Manager and Apollo CLI caches.
+.build/
+.swiftpm/

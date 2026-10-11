@@ -2,8 +2,9 @@
 // This file was automatically generated and should not be edited.
 
 @_exported import ApolloAPI
+@_spi(Execution) @_spi(Unsafe) import ApolloAPI
 
-public class TagCategoriesQuery: GraphQLQuery {
+nonisolated public struct TagCategoriesQuery: GraphQLQuery {
   public static let operationName: String = "tagCategories"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
@@ -16,15 +17,18 @@ public class TagCategoriesQuery: GraphQLQuery {
     self.name = name
   }
 
-  public var __variables: Variables? { ["name": name] }
+  @_spi(Unsafe) public var __variables: Variables? { ["name": name] }
 
-  public struct Data: TeaElephantSchema.SelectionSet {
-    public let __data: DataDict
-    public init(_dataDict: DataDict) { __data = _dataDict }
+  nonisolated public struct Data: TeaElephantSchema.SelectionSet {
+    @_spi(Unsafe) public let __data: DataDict
+    @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-    public static var __parentType: ApolloAPI.ParentType { TeaElephantSchema.Objects.Query }
-    public static var __selections: [ApolloAPI.Selection] { [
+    @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { TeaElephantSchema.Objects.Query }
+    @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
       .field("tagsCategories", [TagsCategory].self, arguments: ["name": .variable("name")]),
+    ] }
+    @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+      TagCategoriesQuery.Data.self
     ] }
 
     /// Get categories of tags
@@ -33,15 +37,18 @@ public class TagCategoriesQuery: GraphQLQuery {
     /// TagsCategory
     ///
     /// Parent Type: `TagCategory`
-    public struct TagsCategory: TeaElephantSchema.SelectionSet {
-      public let __data: DataDict
-      public init(_dataDict: DataDict) { __data = _dataDict }
+    nonisolated public struct TagsCategory: TeaElephantSchema.SelectionSet {
+      @_spi(Unsafe) public let __data: DataDict
+      @_spi(Unsafe) public init(_dataDict: DataDict) { __data = _dataDict }
 
-      public static var __parentType: ApolloAPI.ParentType { TeaElephantSchema.Objects.TagCategory }
-      public static var __selections: [ApolloAPI.Selection] { [
+      @_spi(Execution) public static var __parentType: any ApolloAPI.ParentType { TeaElephantSchema.Objects.TagCategory }
+      @_spi(Execution) public static var __selections: [ApolloAPI.Selection] { [
         .field("__typename", String.self),
         .field("id", TeaElephantSchema.ID.self),
         .field("name", String.self),
+      ] }
+      @_spi(Execution) public static var __fulfilledFragments: [any ApolloAPI.SelectionSet.Type] { [
+        TagCategoriesQuery.Data.TagsCategory.self
       ] }
 
       public var id: TeaElephantSchema.ID { __data["id"] }

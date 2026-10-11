@@ -3,34 +3,35 @@
 
 import ApolloAPI
 
-public protocol SelectionSet: ApolloAPI.SelectionSet & ApolloAPI.RootSelectionSet
+nonisolated public protocol SelectionSet: ApolloAPI.SelectionSet & ApolloAPI.RootSelectionSet
 where Schema == TeaElephantSchema.SchemaMetadata {}
 
-public protocol InlineFragment: ApolloAPI.SelectionSet & ApolloAPI.InlineFragment
+nonisolated public protocol InlineFragment: ApolloAPI.SelectionSet & ApolloAPI.InlineFragment
 where Schema == TeaElephantSchema.SchemaMetadata {}
 
-public protocol MutableSelectionSet: ApolloAPI.MutableRootSelectionSet
+nonisolated public protocol MutableSelectionSet: ApolloAPI.MutableRootSelectionSet
 where Schema == TeaElephantSchema.SchemaMetadata {}
 
-public protocol MutableInlineFragment: ApolloAPI.MutableSelectionSet & ApolloAPI.InlineFragment
+nonisolated public protocol MutableInlineFragment: ApolloAPI.MutableSelectionSet & ApolloAPI.InlineFragment
 where Schema == TeaElephantSchema.SchemaMetadata {}
 
-public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
-  public static let configuration: ApolloAPI.SchemaConfiguration.Type = SchemaConfiguration.self
+nonisolated public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
+  public static let configuration: any ApolloAPI.SchemaConfiguration.Type = SchemaConfiguration.self
 
-  public static func objectType(forTypename typename: String) -> Object? {
-    switch typename {
-    case "Mutation": return TeaElephantSchema.Objects.Mutation
-    case "TagCategory": return TeaElephantSchema.Objects.TagCategory
-    case "Tea": return TeaElephantSchema.Objects.Tea
-    case "Tag": return TeaElephantSchema.Objects.Tag
-    case "Query": return TeaElephantSchema.Objects.Query
-    case "Subscription": return TeaElephantSchema.Objects.Subscription
-    default: return nil
-    }
+  private static let objectTypeMap: [String: ApolloAPI.Object] = [
+    "Mutation": TeaElephantSchema.Objects.Mutation,
+    "Query": TeaElephantSchema.Objects.Query,
+    "Subscription": TeaElephantSchema.Objects.Subscription,
+    "Tag": TeaElephantSchema.Objects.Tag,
+    "TagCategory": TeaElephantSchema.Objects.TagCategory,
+    "Tea": TeaElephantSchema.Objects.Tea
+  ]
+
+  @_spi(Execution) public static func objectType(forTypename typename: String) -> ApolloAPI.Object? {
+    objectTypeMap[typename]
   }
 }
 
-public enum Objects {}
-public enum Interfaces {}
-public enum Unions {}
+nonisolated public enum Objects {}
+nonisolated public enum Interfaces {}
+nonisolated public enum Unions {}

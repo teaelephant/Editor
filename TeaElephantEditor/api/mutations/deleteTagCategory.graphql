@@ -1,0 +1,3 @@
+mutation deleteTagCategory($id: ID!){
+    deleteTagCategory(id: $id)
+}

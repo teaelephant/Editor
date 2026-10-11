@@ -1,1 +1,27 @@
-/Users/xax/Library/Developer/Xcode/DerivedData/TeaElephantEditor-dllfgjhkynnrfhanpdvfrltbwrye/Build/Products/Debug/apollo-ios-cli
+#!/bin/sh
+set -eu
+
+# Keep this version aligned with the generated schema package.
+cli_version=2.4.0
+archive_sha256=c48b2137144bfc823c1b4f219d5b1d7f4f36a059744150e7f2505aa971f0b1fc
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cli_cache="${APOLLO_CLI_CACHE_DIR:-$repo_root/.build/apollo-cli}/$cli_version"
+cli_binary="$cli_cache/apollo-ios-cli"
+
+if [ ! -x "$cli_binary" ]; then
+    mkdir -p "$cli_cache"
+    download_dir=$(mktemp -d "$cli_cache/.download.XXXXXX")
+    trap 'rm -rf "$download_dir"' EXIT HUP INT TERM
+    archive="$download_dir/apollo-ios-cli.tar.gz"
+    curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error \
+        "https://github.com/apollographql/apollo-ios/releases/download/$cli_version/apollo-ios-cli.tar.gz" \
+        --output "$archive"
+    printf '%s  %s\n' "$archive_sha256" "$archive" | shasum -a 256 --check
+    tar -xzf "$archive" -C "$download_dir" apollo-ios-cli
+    chmod +x "$download_dir/apollo-ios-cli"
+    mv "$download_dir/apollo-ios-cli" "$cli_binary"
+    rm -rf "$download_dir"
+    trap - EXIT HUP INT TERM
+fi
+
+exec "$cli_binary" "$@"

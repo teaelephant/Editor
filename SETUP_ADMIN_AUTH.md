@@ -1,214 +1,106 @@
-# Admin Authentication Setup Guide
+# Editor admin authentication
 
-This guide walks you through setting up admin authentication for TeaElephantEditor.
+Editor uses a dedicated ECDSA P-256 key to authorize catalogue administration.
+The private key stays on the Mac; the backend verifies JWTs with the matching
+public key. A mobile user's Apple sign-in token does not grant admin access.
 
-## Overview
+Building the app and running the injected unit tests do not require this key.
+A new TestFlight installation is not automatically provisioned with one.
 
-The client has been configured to:
-1. Load admin private key from macOS Keychain
-2. Generate JWT tokens with proper claims (iss, aud, iat, nbf, exp, jti, admin, kid)
-3. Automatically add `Authorization: Bearer <jwt>` header to all GraphQL requests
-4. Support both HTTP (queries/mutations) and WebSocket (subscriptions) authentication
+## Backend prerequisite
 
-## One-Time Setup: Import Private Key to Keychain
+Have an authorized operator generate or provide the admin keypair and configure
+the server's `ADMIN_PUBLIC_KEY_PATH`. The backend's
+[key setup guide](https://github.com/teaelephant/TeaElephantMemory/blob/master/docs/ADMIN_KEYS_SETUP.md)
+describes that side of provisioning. Use the public key corresponding to the
+existing private key; deploying an unrelated new public key will invalidate
+the currently provisioned clients.
 
-### Prerequisites
+Keep the PEM private key outside the repository and app bundle. Do not paste
+it into source, build settings, command arguments, logs or issue reports.
 
-You should have already:
-1. Generated the admin key pair on the server side (see `ADMIN_AUTH.md`)
-2. Deployed the server with the admin public key
-3. Saved `admin_private_key.pem` securely (never commit to git!)
+## Keychain contract
 
-### Option 1: Using Security Command Line Tool (Recommended)
+The current loader in
+[AdminAuth.swift](TeaElephantEditor/AdminAuth.swift) queries this item:
 
-```bash
-# Import the private key into your login keychain
-security import /path/to/admin_private_key.pem \
-  -k ~/Library/Keychains/login.keychain-db \
-  -T /Applications/TeaElephantEditor.app \
-  -T /usr/bin/security
+| Property | Required representation |
+| --- | --- |
+| Keychain class | `kSecClassGenericPassword` |
+| Label | `com.teaelephant.editor.adminkey` |
+| Value data | Raw bytes of `P256.Signing.PrivateKey.x963Representation` |
+| App access group | `$(AppIdentifierPrefix)com.teaelephant.editor`, declared in the app entitlements |
 
-# Set the key to be accessible without prompting
-# Find the key first
-security find-key -a "com.teaelephant.editor.adminkey"
+The loader reconstructs the key with
+`P256.Signing.PrivateKey(x963Representation:)`. A PEM string, a base64-encoded
+string or an imported `kSecClassKey` object is not the expected value.
 
-# Or use Keychain Access.app to set access control
-open -a "Keychain Access"
-# Then search for "com.teaelephant.editor.adminkey"
-# Double-click → Access Control → Select "Allow all applications to access this item"
-```
-
-### Option 2: Programmatic Import (From the App)
-
-You can also add a one-time setup function in your app. Add this to your app initialization code:
+Provision this binary generic-password item through a trusted, appropriately
+signed setup tool or local debug provisioning that can access the app's
+Keychain group. When converting an existing P-256 PEM with CryptoKit, the value
+to store is:
 
 ```swift
-// One-time setup - only run this once to import the key
-func setupAdminKey() {
-    guard let pemPath = Bundle.main.path(forResource: "admin_private_key", ofType: "pem"),
-          let pemData = try? Data(contentsOf: URL(fileURLWithPath: pemPath)) else {
-        print("Could not load admin_private_key.pem from bundle")
-        return
-    }
-
-    do {
-        try AdminAuth.importPrivateKeyFromPEM(pemData: pemData)
-        print("Admin key imported successfully!")
-    } catch {
-        print("Failed to import admin key: \(error)")
-    }
-}
+let key = try P256.Signing.PrivateKey(pemRepresentation: privateKeyPEM)
+let valueData = key.x963Representation
 ```
 
-**Important:** After importing, remove the PEM file from your app bundle to ensure it's not distributed!
+The code above describes conversion only; it does not install the item. The app
+currently has no provisioning screen or supported standalone setup command.
+Use the maintainer's provisioning process for a fresh Mac and confirm that
+`AdminAuth.loadPrivateKeyFromKeychain()` succeeds from the signed app without
+printing the returned key.
 
-### Option 3: Manual Import via Keychain Access
+### Limitation of the legacy importer
 
-1. Open **Keychain Access.app**
-2. Select **Login** keychain
-3. Go to **File → Import Items...**
-4. Select your `admin_private_key.pem` file
-5. After import, find the key in the list (it may be named differently)
-6. Right-click → Get Info
-7. Set **Label** to: `com.teaelephant.editor.adminkey`
-8. Go to **Access Control** tab
-9. Select "Allow all applications to access this item" (or add TeaElephantEditor specifically)
+`AdminAuth.importPrivateKeyFromPEM` writes a `kSecClassKey` item, while
+`loadPrivateKeyFromKeychain` reads a `kSecClassGenericPassword` item. They do
+not currently form a working import/load round trip. Likewise, `security
+import` or importing a PEM through Keychain Access only creates a key object;
+changing its label does not convert it to the binary password item above.
 
-## Verification
+Do not use the old importer as a fresh-install setup recipe or grant all
+applications access to a private key. Provision only the intended editor or
+setup tool. This guide documents the current implementation; it does not
+change the app's import code.
 
-Once the key is imported, verify it works:
+## Request flow
 
-1. Build and run TeaElephantEditor
-2. Check the console for any JWT generation errors
-3. Try creating or updating a tea/tag (any admin mutation)
-4. If you get authentication errors, check:
-   - The key is properly imported (search in Keychain Access)
-   - The key label matches exactly: `com.teaelephant.editor.adminkey`
-   - The server has the corresponding public key configured
-   - The server's `kid` in validation matches the client's `kid` in JWT header ("admin-key-v1")
+1. `AdminAuth.generateAdminJWT()` loads the Keychain value and signs a JWT with
+   ES256 and a raw `R || S` signature.
+2. `AuthInterceptor` adds `Authorization: Bearer <jwt>` to HTTP requests when
+   generation succeeds.
+3. `Network` includes the JWT under `Authorization` in the WebSocket
+   `connection_init` payload when creating the subscription transport.
+4. The backend validates the token and enforces administration privileges for
+   protected mutations.
 
-## How It Works
+The current JWT contains `admin=true`, issuer `TeaElephantEditor`, audience
+`tea-elephant-api`, issuance time, a not-before time 60 seconds earlier,
+24-hour expiry and a UUID `jti`. Its header contains `alg=ES256` and `typ=JWT`;
+it **omits `kid`** and therefore depends on the backend's default admin key.
 
-### JWT Generation
+HTTP generates a token per intercepted request. The WebSocket payload is
+created with its transport; do not assume that reconnecting automatically
+generates a new token after expiry or key rotation. Restart/recreate the
+transport after provisioning changes and validate subscriptions separately.
 
-The `AdminAuth` class:
-1. Loads the ECDSA P-256 private key from Keychain
-2. Creates JWT header with ES256 algorithm and key ID
-3. Creates JWT claims with proper fields:
-   - `admin: true` - marks this as an admin token
-   - `iss: "TeaElephantEditor"` - issuer
-   - `aud: "tea-elephant-api"` - audience
-   - `iat` - issued at timestamp
-   - `nbf` - not before (1 minute ago for clock skew)
-   - `exp` - expires in 24 hours
-   - `jti` - unique JWT ID (UUID)
-4. Signs the JWT with the private key using SHA256
-5. Returns base64URL-encoded JWT
+## Verification and troubleshooting
 
-### Request Flow
+Use a controlled backend for a create/update/delete smoke test, with a known
+disposable entry. Check both an HTTP mutation and a live subscription. Success
+in the unit suite verifies the injected transport path, not live Keychain or
+server access.
 
-1. **HTTP Requests** (queries/mutations):
-   - `AuthInterceptor` intercepts all Apollo requests
-   - Calls `AdminAuth.generateAdminJWT()` to get fresh JWT
-   - Adds `Authorization: Bearer <jwt>` header
-   - Request proceeds to server
+| Symptom | Check |
+| --- | --- |
+| `Failed to load private key from Keychain` or `-25300` | The item exists in the generic-password class, has the exact label and is visible to the signed app |
+| `-34018` | Signing entitlements and Keychain access-group prefix match the provisioned item |
+| Invalid key data | Value data is raw P-256 X9.63 private-key bytes, not PEM/base64 text |
+| Admin mutation rejected | Matching server public key, default key selection, JWT claims and system clock |
+| Reads work but writes fail | Public catalogue reads do not prove administrative authorization |
+| Subscription authorization fails after a change | Recreate the WebSocket transport and verify its current token separately |
 
-2. **WebSocket Connections** (subscriptions):
-   - `Network.swift` generates JWT when creating WebSocket connection
-   - Adds `Authorization: Bearer <jwt>` header to WebSocket handshake
-   - Server validates JWT on connection establishment
-
-### Server Validation
-
-The server (see `ADMIN_AUTH.md` in server repo):
-1. Receives request with JWT in Authorization header
-2. Parses JWT and validates signature using admin public key
-3. Validates algorithm (ES256 only), issuer, audience, expiration, etc.
-4. Checks `admin: true` claim
-5. If valid, sets `AdminPrincipal` in context
-6. Resolvers check `RequireAdmin()` for protected operations
-
-## Troubleshooting
-
-### "Failed to load private key from Keychain"
-
-- **Problem:** Key not found in Keychain
-- **Solution:**
-  - Check Keychain Access.app → Login → Keys
-  - Search for "com.teaelephant.editor.adminkey"
-  - If not found, import the key using one of the methods above
-
-### "keychain lookup failed: -25300" (errSecItemNotFound)
-
-- **Problem:** Key not found with specified label
-- **Solution:**
-  - The key might be imported with a different label
-  - Find the key in Keychain Access and update its label to `com.teaelephant.editor.adminkey`
-
-### "keychain lookup failed: -34018"
-
-- **Problem:** Keychain access denied
-- **Solution:**
-  - Open Keychain Access
-  - Find the key and double-click it
-  - Go to Access Control tab
-  - Add TeaElephantEditor.app or select "Allow all applications"
-
-### Server returns "Admin authentication required" error
-
-- **Problem:** JWT validation failed on server
-- **Possible causes:**
-  1. **Key mismatch:** Private key on client doesn't match public key on server
-     - Regenerate both keys and deploy together
-  2. **Clock skew:** Client and server times are off by more than 5 minutes
-     - Check system time on both client and server
-  3. **Expired token:** Token is older than 24 hours (unlikely since we generate fresh tokens)
-  4. **Wrong kid:** Client sends "admin-key-v1" but server expects different key ID
-     - Check server logs for which `kid` it's looking for
-     - Update `AdminAuth.generateAdminJWT()` to use correct `kid`
-  5. **Server not configured:** Public key not mounted or auth middleware not enabled
-     - Check server deployment and logs
-
-### JWT signature is invalid
-
-- **Problem:** Signature verification fails
-- **Possible causes:**
-  1. Wrong hash algorithm - ensure we're using SHA256 (currently used in code)
-  2. Wrong signature format - ensure we're using rawRepresentation (currently used)
-  3. Key format mismatch - ensure P-256 curve is used on both sides
-
-## Key Rotation
-
-To rotate the admin key (e.g., if compromised):
-
-1. Generate new key pair: `admin_private_key_v2.pem` and `admin_public_key_v2.pem`
-2. Mount new public key on server (keep old one for transition period)
-3. Update server to accept both `admin-key-v1` and `admin-key-v2` in `kid` header
-4. Deploy server
-5. Import new private key to Keychain (can coexist with old key using different labels)
-6. Update `AdminAuth.generateAdminJWT()` to use `"admin-key-v2"` in header
-7. Test with new key
-8. After grace period (e.g., 30 days), remove old key from server
-
-## Security Notes
-
-- ✅ Private key is stored in macOS Keychain (encrypted by OS)
-- ✅ JWT tokens expire after 24 hours (auto-regenerated on each request)
-- ✅ Tokens include `jti` for future revocation support
-- ✅ Signature uses ECDSA P-256 (ES256) - industry standard
-- ✅ Server validates issuer, audience, expiration, and not-before claims
-- ❌ **Never** commit `admin_private_key.pem` to version control
-- ❌ **Never** hardcode the private key in source code
-- ❌ **Never** share the private key via insecure channels (email, Slack, etc.)
-
-## Next Steps
-
-After setup is complete, you should be able to:
-- ✅ Create new teas
-- ✅ Update existing teas
-- ✅ Delete teas
-- ✅ Create/update/delete tags and categories
-- ✅ Use AI description generation
-- ✅ Receive real-time subscription updates
-
-All operations now require valid admin authentication!
+For rotation, coordinate client provisioning and backend verification before
+replacing the default key. The current client does not select a versioned
+`kid`; changing that strategy requires a reviewed client/server code change.

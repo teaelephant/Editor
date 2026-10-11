@@ -1,145 +1,87 @@
-# CLAUDE.md
+# Editor development guidance
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Start with [README.md](README.md) for product scope, setup, source layout and
+commands. This is the macOS administrative client; the iOS app and Go backend
+are separate repositories.
 
-## Project Overview
+## Build and verification
 
-TeaElephantEditor is a macOS SwiftUI application for managing tea, coffee, and herb records. It connects to a GraphQL backend at tea-elephant.com for CRUD operations, real-time subscriptions, and AI-powered description generation.
+Use `TeaElephantEditor.xcworkspace` and the shared `TeaElephantEditor` scheme.
+The app's deployment target is macOS 26.6. Apollo's generated package requires
+a Swift 6.1+ compiler; the app currently uses Swift 5 language mode.
 
-## Build and Run
-
-Use the shared application scheme in the workspace. The local entrypoint builds and launches the app:
-
-```bash
-# Open in Xcode
-open TeaElephantEditor.xcworkspace
-
-# Or build from command line
-./script/build_and_run.sh --verify
-
-# Run tests
+```sh
+xcodebuild -workspace TeaElephantEditor.xcworkspace -scheme TeaElephantEditor \
+  -configuration Debug -destination "platform=macOS,arch=$(uname -m)" \
+  -derivedDataPath .build/DerivedData build
 xcodebuild -workspace TeaElephantEditor.xcworkspace -scheme TeaElephantEditorTests \
-  -destination 'platform=macOS' test
+  -destination "platform=macOS,arch=$(uname -m)" test
 ```
 
-## GraphQL Code Generation
+`script/build_and_run.sh` stops every process named `TeaElephantEditor` before
+building. Preserve the user's running app and unsaved state: prefer a separate
+build and launch by exact bundle path when an existing session must stay open.
+The unit scheme excludes the separate UI-test target.
 
-The project uses Apollo iOS 2.4.0 and its matching CLI for GraphQL operations. Generated Swift code is in `TeaElephantEditor/api/schema/Sources/`.
+## Architecture and behaviour to preserve
 
-To regenerate GraphQL code after schema changes:
+- `Table` owns `ListManager`; `DetailController` owns `DetailManager` with
+  `@StateObject`. Form fields belong to `Detail` view state.
+- `DetailManager.save` creates a draft once, adopts the returned ID, then
+  updates that ID on subsequent saves. It owns description generation and its
+  loading/error state, including generation for unsaved drafts.
+- `TagsSelectManager` performs tag assignment/removal and triggers a detail
+  refresh. Read the displayed tags from the refreshed detail; preserve edited
+  form fields during that refresh.
+- `ListManager` handles five subscriptions: create, update, delete, tag add and
+  tag remove. Preserve the actual drink type and tag colours. Late update/tag
+  events must not restore deleted rows or overwrite newer unrelated fields.
+- `TagsEditor.Controller` owns stable managers. Search tasks are cancellable
+  and discard stale results; clearing category selection clears both displayed
+  tags and the category used for creation.
+- Managers publish on `MainActor` and accept an optional Apollo client for
+  injection. Keep network errors visible; only validated successful responses
+  may set saved state or complete an operation.
 
-```bash
-# The wrapper downloads and verifies the pinned CLI release when needed.
+## Network and GraphQL
+
+`Network.swift` defines HTTP `https://tea-elephant.com/v2/query` and WebSocket
+`wss://tea-elephant.com/v2/query`. HTTP uses `RequestChainNetworkTransport`;
+subscriptions use `WebSocketTransport`, combined with `SplitNetworkTransport`.
+Apollo stores its normalised cache in memory. Use `.CacheFirst` for normal
+loads and `.NetworkOnly` for explicit refreshes and description generation.
+
+`ApolloClientExtension.swift` supplies fetch/mutation/subscription adapters and
+`validatedData()`. Check GraphQL errors as well as transport failures. Do not
+infer success merely from a response's non-nil data. Cancel subscriptions when
+their owner is released.
+
+The codegen JSON's localhost endpoint is for schema introspection, not runtime
+configuration. Regenerate after operation/schema changes:
+
+```sh
 ./apollo-ios-cli generate --path TeaElephantEditor/apollo-codegen-config.json
+git diff -- TeaElephantEditor/api/schema
 ```
 
-GraphQL files are organized as:
-- `TeaElephantEditor/api/queries/*.graphql` - Query operations
-- `TeaElephantEditor/api/mutations/*.graphql` - Mutation operations
-- `TeaElephantEditor/api/subscriptions/*.graphql` - Subscription operations
-- `TeaElephantEditor/api/schema.json` - Committed GraphQL schema snapshot
+Apollo and its CLI are pinned to 2.4.0. Generated sources live in
+`TeaElephantEditor/api/schema/Sources`. Keep operation paths explicit in the
+configuration so generation also works inside ignored worktree directories.
+See [codegen instructions](APOLLO_CODEGEN_INSTRUCTIONS.md) and
+[dependency maintenance](docs/DEPENDENCIES.md).
 
-## Architecture
+## Authentication and test boundaries
 
-### Network Layer
+`AdminAuth` signs ES256 JWTs from a Keychain private key. HTTP requests carry a
+Bearer token; WebSocket authorization belongs to `connection_init`. Follow
+[SETUP_ADMIN_AUTH.md](SETUP_ADMIN_AUTH.md) for the actual storage contract and
+the limitations of the legacy import helper.
 
-The app uses a singleton `Network` class (Network.swift:12) with:
-- HTTP transport for queries/mutations via `RequestChainNetworkTransport`
-- WebSocket transport for real-time subscriptions via `WebSocketTransport`
-- `SplitNetworkTransport` combining both transports
-- Apollo client with local cache via `ApolloStore`
+Use `EditorTestTransport` for manager regression tests. Avoid changing
+production transports to mocks. UI writes need an isolated fixture or a
+controlled backend; a successful build is not a live smoke test. Never log or
+commit private keys or JWTs.
 
-Base URLs:
-- GraphQL HTTP: `https://tea-elephant.com/v2/query`
-- GraphQL WebSocket: `wss://tea-elephant.com/v2/query`
-
-### Apollo Extensions
-
-`ApolloClientExtension.swift` provides async/await wrappers:
-- `fetchAsync()` - Returns `AsyncThrowingStream<GraphQLResponse<Query>, Error>` with `FetchBehavior` support
-- `performAsync()` - Returns async `Result` containing a typed mutation response
-- `subscribeAsync()` - Returns a cancellable task and delivers subscription responses on MainActor
-
-### Manager Pattern
-
-The app follows a Manager/Controller/View pattern with ObservableObject managers:
-
-**ListManager** (TeaElephantEditor/Managers/List.swift:16)
-- Manages the tea list with `@Published var list: [TeaListElement]`
-- `loadData()` fetches teas via `ListQuery`
-- `subscribeOnChange()` sets up three subscriptions (onCreate, onUpdate, onDelete) for real-time updates
-- Updates list in-place when subscriptions fire
-
-**DetailManager** (TeaElephantEditor/Managers/DetailManager.swift:14)
-- Manages individual tea details with `@Published var detail: TeaDataWithID?`
-- `loadData()` fetches tea via `GetQuery(id:)`
-- `update()` performs `UpdateMutation`
-- `create()` performs `CreateMutation`
-- `delete()` performs `DeleteMutation`
-- Shows saved state via `@Published var saved: Bool`
-
-**TagsEditor.Manager** (TeaElephantEditor/TagsEditor/Manager.swift:11)
-- Manages tags filtered by category
-- `loadData()` fetches tags via `TagsQuery(name:category:)`
-- `createTag()` creates new tags with color
-- Tag colors are stored as hex strings
-
-**TagsEditor.CategoryManager** (TeaElephantEditor/TagsEditor/Manager.swift:73)
-- Manages tag categories
-- `loadData()` fetches via `TagCategoriesQuery(name:)`
-- `createCategory()` creates new categories
-
-### Data Models
-
-**TeaDataWithID** (TeaElephantEditor/Models/TeaInfo.swift:17)
-- Full tea record with ID, name, type, description, tags
-
-**TeaListElement** (TeaElephantEditor/Models/TeaInfo.swift:25)
-- Lightweight list item with ID, name, type, tags (minimal tag data)
-
-**TeaType enum** (TeaElephantEditor/Models/TeaInfo.swift:10)
-- Enum matching GraphQL Type: tea, coffee, herb, other
-
-**Tag** (TeaElephantEditor/Models/Tag.swift)
-- Full tag with id, name, color (hex), category
-
-### View Architecture
-
-**Table** (TeaElephantEditor/Views/Table.swift:11)
-- Main list view using `ListManager`
-- NavigationView with links to DetailController for each tea
-- Refresh button calls `loadData(forceReload: true)`
-- Plus button navigates to `DetailController(id: "")` for new teas
-- Link to TagsEditor.Controller
-
-**DetailController** (TeaElephantEditor/Controllers/Detail.swift:8)
-- Controller wrapping Detail view
-- Creates `DetailManager(id)`
-- Handles empty id ("") as create mode, non-empty as edit mode
-- Shows ProgressView while loading
-
-**Detail** (TeaElephantEditor/Views/DetailView.swift:12)
-- Form for editing tea: name, type, description, tags
-- "Generate description" button calls AI generation via `TagsSelectManager.generateDescription(name:)` which uses `DescGenQuery`
-- Save button calls `update()` callback, shows checkmark animation on success
-- Delete button calls `delete()` callback
-
-**TagsEditor.Controller/View** (TeaElephantEditor/TagsEditor/)
-- Separate editor for managing tags and categories
-- Uses TagsEditor.Manager and CategoryManager
-
-### AI Description Generation
-
-The app includes AI-powered description generation:
-- Query: `descGen(name:String!): String` (TeaElephantEditor/api/queries/descGen.graphql)
-- Called from Detail view when user clicks "Generate description"
-- Managed by `TagsSelectManager.generateDescription(name:)`
-- Shows loading state while generating
-
-## Important Notes
-
-- Minimum app deployment target: macOS 26.6; Apollo itself supports macOS 12 or newer
-- GraphQL operations are strongly typed via Apollo codegen
-- Real-time updates happen automatically via WebSocket subscriptions
-- Fetch behavior is `.CacheFirst` by default, `.NetworkOnly` for force reload, or `.CacheAndNetwork` for cached and refreshed responses
-- Perform updates to published UI state on MainActor
+For distribution, follow [release instructions](docs/RELEASES.md). Keep source
+publication, successful upload, Apple processing and tester access as separate
+verified steps.

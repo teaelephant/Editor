@@ -28,4 +28,17 @@ xcodebuild -workspace TeaElephantEditor.xcworkspace -scheme TeaElephantEditorTes
 
 UI tests use the existing separate target and are not included in this unit-test scheme.
 
+The shared `TeaElephantEditor` application scheme supports reproducible builds
+without personal Xcode settings. Build and launch locally with:
+
+```sh
+./script/build_and_run.sh --verify
+```
+
+The Codex Run action uses the same script. It supports `--debug`, `--logs`, and
+`--telemetry`; `EDITOR_CONFIGURATION` selects Debug or Release,
+`EDITOR_DERIVED_DATA` changes the build directory, and
+`EDITOR_SOURCE_PACKAGES_DIR` reuses a resolved package cache. All workspace
+lockfiles contain the current Apollo and Regex dependency graph.
+
 HTTP requests retain admin JWT authorization from the existing Keychain provider. WebSocket authorization is included in `connection_init`; queries and mutations use HTTP and subscriptions use WebSocket. Network callbacks update UI state on MainActor, and cancelling a task stops its subscription.
